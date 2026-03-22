@@ -1,0 +1,21 @@
+{
+  "current_week": 12,
+  "current_week_revenue": 690.0,
+  "previous_week_revenue": 0,
+  "growth_percent": 0,
+  "best_day": "Friday",
+  "peak_hour": 16,
+  "top_items": [
+    {
+      "name": "Caesar Salad",
+      "quantity": 3,
+      "revenue": 540.0
+    },
+    {
+      "name": "Spring Rolls",
+      "quantity": 1,
+      "revenue": 150.0
+    }
+  ],
+  "last_updated": "2026-03-20T16:51:27.784892"
+}

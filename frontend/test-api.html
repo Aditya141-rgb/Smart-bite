@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>Testing Backend API</h1>
+    <button onclick="testOrders()">Test Orders API</button>
+    <button onclick="testStats()">Test Stats API</button>
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:4000/api';
+
+        async function testOrders() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/orders`);
+                const data = await response.json();
+                document.getElementById('result').innerHTML = 
+                    `<h3>Orders API Response:</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                console.log('Orders data:', data);
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    `<h3>Error:</h3><p>${error.message}</p>`;
+                console.error('Error:', error);
+            }
+        }
+
+        async function testStats() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/stats`);
+                const data = await response.json();
+                document.getElementById('result').innerHTML = 
+                    `<h3>Stats API Response:</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                console.log('Stats data:', data);
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    `<h3>Error:</h3><p>${error.message}</p>`;
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

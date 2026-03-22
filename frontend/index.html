@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartBite Restaurant</title>
+  <style>
+    /* Instagram-inspired color variables */
+    :root {
+      --insta-purple: #833ab4;
+      --insta-pink: #e1306c;
+      --insta-orange: #fd1d1d;
+      --insta-yellow: #fdcb6e;
+      --insta-blue: #405de6;
+      --bg-light: #fafafa;
+      --bg-dark: #0a0a0a;
+      --card-light: #ffffff;
+      --card-dark: #1a1a1a;
+      --card-darker: #2d2d2d;
+      --text-light: #262626;
+      --text-dark: #e0e0e0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+      line-height: 1.6;
+      transition: all 0.3s ease;
+    }
+    
+    body.light-mode {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+    }
+    
+    /* Instagram Gradient Header */
+    header {
+      background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: white;
+    }
+    
+    .user-welcome {
+      font-size: 0.9rem;
+    }
+    
+    .logout-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 5px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s;
+    }
+    
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.05);
+    }
+    
+    .dark-mode-toggle {
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 5px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .dark-mode-toggle:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.05);
+    }
+    
+    header h1 {
+      font-size: 1.8rem;
+      background: linear-gradient(45deg, #fff, #ffd6d6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      background-color: rgba(255,255,255,0.1);
+      transition: all 0.3s;
+      position: relative;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    
+    nav a:hover {
+      background-color: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
+    }
+    
+    nav a.notification::after {
+      content: 'New';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: linear-gradient(45deg, #e1306c, #fd1d1d);
+      color: white;
+      font-size: 0.6rem;
+      padding: 2px 6px;
+      border-radius: 10px;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    
+    .menu-toggle span {
+      width: 100%;
+      height: 3px;
+      background-color: white;
+      border-radius: 5px;
+      transition: all 0.3s;
+    }
+    
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background: linear-gradient(135deg, #405de6, #833ab4, #e1306c);
+      padding: 2rem;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      position: relative;
+      animation: modalFadeIn 0.3s;
+      color: white;
+    }
+    
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: rgba(255,255,255,0.8);
+    }
+    
+    .close-modal:hover {
+      color: white;
+    }
+    
+    .offer-item {
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 15px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .offer-item h3 {
+      color: #ffd6d6;
+      margin-bottom: 5px;
+      font-size: 1.1rem;
+    }
+    
+    .virtual-tour {
+      padding: 2rem;
+      background: linear-gradient(135deg, rgba(30,30,30,0.9), rgba(30,30,30,0.95));
+      border-radius: 20px;
+      margin: 2rem 0;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    
+    body.light-mode .virtual-tour {
+      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.95));
+    }
+    
+    .tour-container {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+      overflow: hidden;
+      border-radius: 15px;
+      height: 400px;
+      background: linear-gradient(45deg, #405de6, #e1306c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    
+    /* Hero Section */
+    .hero {
+      position: relative;
+      height: 500px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      border-radius: 0 0 30px 30px;
+    }
+    
+    .hero-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.5);
+    }
+    
+    .hero-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+      width: 90%;
+    }
+    
+    .hero-content h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+      background: linear-gradient(45deg, #fff, #ffd6d6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .hero-content p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+      color: #ffd6d6;
+    }
+    
+    .visit-menu-btn {
+      background: linear-gradient(45deg, #ff6b6b, #ff4757);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    
+    .visit-menu-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 20px rgba(255, 71, 87, 0.4);
+    }
+    
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .feature {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: 1.5rem 1rem;
+      border-radius: 15px;
+      min-width: 120px;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.3s;
+    }
+    
+    .feature:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.25);
+    }
+    
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .feature-text {
+      font-size: 0.9rem;
+      text-align: center;
+      font-weight: 500;
+    }
+    
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    
+    /* AI Recommendations Section */
+    .recommendations-section {
+      margin: 50px 0;
+      padding: 30px;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border-radius: 25px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    body.light-mode .recommendations-section {
+      background: linear-gradient(135deg, #f5f7ff, #f0f2ff);
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    
+    .section-header h2 {
+      background: linear-gradient(45deg, #e1306c, #fd1d1d);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 1.8rem;
+    }
+    
+    .ai-badge {
+      background: rgba(225, 48, 108, 0.2);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: #e1306c;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .recommendations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+    }
+    
+    .rec-card {
+      background: linear-gradient(135deg, #2d2d2d, #252525);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.3s;
+      border: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+      animation: fadeInUp 0.5s ease;
+    }
+    
+    body.light-mode .rec-card {
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .rec-card:hover {
+      transform: translateY(-8px);
+      border-color: #e1306c;
+    }
+    
+    .rec-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      background: linear-gradient(45deg, #405de6, #e1306c);
+    }
+    
+    .rec-info {
+      padding: 20px;
+    }
+    
+    .rec-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    
+    .rec-price {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #e1306c;
+      margin-bottom: 10px;
+    }
+    
+    .rec-stats {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+    }
+    
+    body.light-mode .rec-stats {
+      color: #888;
+    }
+    
+    .rec-badge {
+      display: inline-block;
+      background: rgba(225, 48, 108, 0.2);
+      color: #e1306c;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+    
+    /* Loading Spinner */
+    .loading-spinner {
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(225, 48, 108, 0.3);
+      border-top-color: #e1306c;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Order Confirmation Popup */
+    .order-confirmation-popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(45deg, #4CAF50, #2E7D32);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      z-index: 2000;
+      animation: slideIn 0.3s ease, slideOut 0.3s ease 2.7s;
+      max-width: 280px;
+      display: none;
+    }
+    
+    @keyframes slideIn {
+      0% { transform: translateX(100%); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+      0% { transform: translateX(0); opacity: 1; }
+      100% { transform: translateX(100%); opacity: 0; }
+    }
+    
+    /* Chatbot Styles */
+    #chatbot {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 320px;
+      height: 420px;
+      background: #1e1e1e;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 3000;
+    }
+    
+    body.light-mode #chatbot {
+      background: white;
+    }
+    
+    #chatbot-header {
+      background: linear-gradient(45deg, #405de6, #833ab4);
+      color: white;
+      padding: 12px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    #chatbot-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background: #2d2d2d;
+    }
+    
+    body.light-mode #chatbot-messages {
+      background: #f5f7ff;
+    }
+    
+    .message {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 15px;
+      max-width: 80%;
+      font-size: 0.9rem;
+    }
+    
+    .user {
+      background: linear-gradient(45deg, #405de6, #833ab4);
+      color: white;
+      align-self: flex-end;
+      margin-left: auto;
+    }
+    
+    .bot {
+      background: #3d3d3d;
+      color: white;
+      align-self: flex-start;
+    }
+    
+    body.light-mode .bot {
+      background: #e0e0ff;
+      color: #333;
+    }
+    
+    #chatbot-input-area {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #444;
+    }
+    
+    #chatbot-input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 20px;
+      border: 1px solid #444;
+      outline: none;
+      background: #2d2d2d;
+      color: white;
+    }
+    
+    body.light-mode #chatbot-input {
+      background: white;
+      border-color: #ccc;
+      color: #262626;
+    }
+    
+    #chatbot-input-area button {
+      margin-left: 8px;
+      border: none;
+      background: linear-gradient(45deg, #405de6, #833ab4);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    
+    #micBtn {
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      transition: all 0.3s;
+    }
+    
+    #micBtn.listening {
+      background: #4CAF50;
+      animation: micPulse 1.5s infinite;
+    }
+    
+    @keyframes micPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    #chatbot-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(45deg, #405de6, #833ab4);
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      z-index: 3000;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav {
+        position: fixed;
+        top: 0;
+        right: -250px;
+        width: 250px;
+        height: 100vh;
+        background: linear-gradient(45deg, #405de6, #833ab4);
+        flex-direction: column;
+        padding: 2rem;
+        transition: right 0.3s ease;
+        z-index: 100;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+      }
+      
+      nav.active {
+        right: 0;
+      }
+      
+      .menu-toggle {
+        display: flex;
+        z-index: 101;
+      }
+      
+      .menu-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      
+      .menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+      }
+      
+      .menu-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -6px);
+      }
+      
+      .hero-content h2 {
+        font-size: 1.5rem;
+      }
+      
+      .recommendations-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <h1 onclick="window.location.href='index.html'">🍴 SmartBite Restaurant</h1>
+      <button class="menu-toggle" id="menuToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <nav id="mainNav">
+      <a href="#offers" onclick="showOffers()" class="notification">Special Offers</a>
+      <a href="#virtual-tour" onclick="showVirtualTour()">Virtual Tour</a>
+      <a href="menu.html">Order Food</a>
+      <a href="order-history.html">My Orders</a>
+      
+    </nav>
+
+    <div class="header-right" id="userInfoSection">
+      <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Light Mode">
+        <span id="darkModeIcon">☀️</span>
+        <span id="darkModeText">Light</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="modal" id="offersModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('offersModal')">&times;</span>
+      <h2>🎉 Special Offers</h2>
+      <div class="offer-item">
+        <h3>Family Feast</h3>
+        <p>Get 20% off on orders above ₹2000. Valid until end of month.</p>
+      </div>
+      <div class="offer-item">
+        <h3>Weekend Special</h3>
+        <p>Buy one main course, get one free every Friday and Saturday.</p>
+      </div>
+      <div class="offer-item">
+        <h3>Student Discount</h3>
+        <p>15% off for students with valid ID card.</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="hero">
+    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmVzdGF1cmFudHxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80" alt="Restaurant Interior" class="hero-image">
+    <div class="hero-content">
+      <h2>Welcome to SmartBite Restaurant</h2>
+      <p>Experience the finest cuisine with a modern twist</p>
+      <button class="visit-menu-btn" onclick="window.location.href='menu.html'">
+        <i class="fas fa-utensils"></i> Visit Full Menu →
+      </button>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">🍽️</div>
+          <div class="feature-text">Fine Dining</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🚚</div>
+          <div class="feature-text">Fast Delivery</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🌱</div>
+          <div class="feature-text">Fresh Ingredients</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">👨‍🍳</div>
+          <div class="feature-text">Expert Chefs</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <!-- AI Recommendations Section -->
+    <div class="recommendations-section" id="recommendationsSection">
+      <div class="section-header">
+        <h2><i class="fas fa-robot"></i> AI Recommended For You</h2>
+        <div class="ai-badge">
+          <i class="fas fa-brain"></i> Based on your taste
+        </div>
+      </div>
+      <div id="recommendationsGrid" class="recommendations-grid">
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+          <p>Analyzing your preferences...</p>
+        </div>
+      </div>
+    </div>
+
+    <section class="virtual-tour" id="virtualTour" style="display: none;">
+      <h2>Virtual Tour</h2>
+      <p>Take a look inside our restaurant before you visit</p>
+      <div class="tour-container">
+        <img 
+          src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&w=800&q=80" 
+          alt="360 degree view of restaurant"
+          style="width: 100%; max-width: 800px; border-radius: 10px; object-fit: cover;"
+        />
+      </div>
+    </section>
+  </main>
+
+  <div id="orderConfirmation" class="order-confirmation-popup">
+    <div style="font-weight: bold; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;">
+      <span>✅</span> <span>Order Updated</span>
+    </div>
+    <div id="confirmationText" style="font-size: 0.9rem;"></div>
+  </div>
+  
+  <!-- Chatbot UI -->
+  <div id="chatbot">
+    <div id="chatbot-header">
+      🤖 SmartBite Assistant
+      <span id="chatbot-close">✖</span>
+    </div>
+    <div id="chatbot-messages"></div>
+    <div id="chatbot-input-area">
+      <input type="text" id="chatbot-input" placeholder="Ask me anything..." />
+      <button id="micBtn" title="Voice input">🎤</button>
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+  <button id="chatbot-toggle">💬</button>
+
+  <script>
+    // Full Menu Data with local PNG images
+    const fullMenuData = {
+      starters: [
+        { name: "Tomato Soup", price: 120, image: "Tomato Soup.jpg", category: "Starters" },
+        { name: "Caesar Salad", price: 180, image: "Caesar Salad.jpg", category: "Starters" },
+        { name: "Spring Rolls", price: 150, image: "spiring rolls.jpg", category: "Starters" },
+        { name: "Garlic Bread", price: 130, image: "garic.jpg", category: "Starters" },
+        { name: "Paneer Tikka", price: 200, image: "panner butter masala.jpg", category: "Starters" }
+      ],
+      main: [
+        { name: "Grilled Seafood", price: 450, image: "grilled-seafood.png", category: "Main Course" },
+        { name: "Chicken Biryani", price: 280, image: "briyani.jpg", category: "Main Course" },
+        { name: "Paneer Butter Masala", price: 250, image: "panner butter masala.jpg", category: "Main Course" },
+        { name: "Butter Chicken", price: 320, image: "Butter Chicken.jpg", category: "Main Course" },
+        { name: "Veg Fried Rice", price: 220, image: "Veg Fried Rice.jpg", category: "Main Course" }
+      ],
+      beverages: [
+        { name: "Coffee Bourbon", price: 120, image: "Coffee Bourbon.jpg", category: "Beverages" },
+        { name: "Masala Tea", price: 50, image: "Masala Tea.jpg", category: "Beverages" },
+        { name: "Fresh Orange Juice", price: 100, image: "Fresh Orange Juice.jpg", category: "Beverages" },
+        { name: "Cold Coffee", price: 150, image: "Cold Coffee.jpg", category: "Beverages" },
+        { name: "Lemon Soda", price: 80, image: "Lemon Soda.jpg", category: "Beverages" }
+      ],
+      desserts: [
+        { name: "Chocolate Ice Cream", price: 150, image: "Chocolate Ice Cream.jpg", category: "Desserts" },
+        { name: "Cheesecake", price: 220, image: "Cheesecake.jpg", category: "Desserts" },
+        { name: "Gulab Jamun", price: 100, image: "Gulab Jamun.jpg", category: "Desserts" },
+        { name: "Brownie with Ice Cream", price: 180, image: "Brownie with Ice Cream.jpg", category: "Desserts" },
+        { name: "Rasgulla", price: 90, image: "Rasgulla.jpg", category: "Desserts" }
+      ]
+    };
+
+    const allItems = [...fullMenuData.starters, ...fullMenuData.main, ...fullMenuData.beverages, ...fullMenuData.desserts];
+
+    // Login Check
+    const userLoggedIn = localStorage.getItem("userLoggedIn") === "true";
+    const ownerLoggedIn = localStorage.getItem("ownerLoggedIn") === "true";
+    const currentUser = localStorage.getItem("userName") || "Guest";
+
+    if (!userLoggedIn && !ownerLoggedIn) {
+      if (!window.location.href.includes('login.html')) {
+        window.location.href = "login.html";
+      }
+    }
+
+    // Dark Mode Toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const darkModeIcon = document.getElementById('darkModeIcon');
+    const darkModeText = document.getElementById('darkModeText');
+    const isLightMode = localStorage.getItem('lightMode') === 'true';
+
+    if (isLightMode) {
+      document.body.classList.add('light-mode');
+      darkModeIcon.textContent = '🌙';
+      darkModeText.textContent = 'Dark';
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+      
+      if (document.body.classList.contains('light-mode')) {
+        darkModeIcon.textContent = '🌙';
+        darkModeText.textContent = 'Dark';
+        localStorage.setItem('lightMode', 'true');
+      } else {
+        darkModeIcon.textContent = '☀️';
+        darkModeText.textContent = 'Light';
+        localStorage.setItem('lightMode', 'false');
+      }
+    });
+
+    function displayUserInfo() {
+      const userName = localStorage.getItem("userName") || "Guest";
+      const userInfoSection = document.getElementById('userInfoSection');
+      
+      if (userInfoSection) {
+        const existingDarkMode = userInfoSection.querySelector('#darkModeToggle');
+        if (existingDarkMode) {
+          userInfoSection.innerHTML = `
+            <div class="user-welcome">
+              Welcome, <strong>${userName}</strong>
+            </div>
+            <button class="logout-btn" onclick="userLogout()">Logout</button>
+          `;
+          userInfoSection.prepend(existingDarkMode);
+        } else {
+          userInfoSection.innerHTML = `
+            <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Light Mode">
+              <span id="darkModeIcon">${isLightMode ? '🌙' : '☀️'}</span>
+              <span id="darkModeText">${isLightMode ? 'Dark' : 'Light'}</span>
+            </button>
+            <div class="user-welcome">
+              Welcome, <strong>${userName}</strong>
+            </div>
+            <button class="logout-btn" onclick="userLogout()">Logout</button>
+          `;
+        }
+      }
+    }
+
+    function userLogout() {
+      localStorage.removeItem("userLoggedIn");
+      localStorage.removeItem("userName");
+      window.location.href = "login.html";
+    }
+
+    const menuToggle = document.getElementById('menuToggle');
+    const mainNav = document.getElementById('mainNav');
+    
+    if (menuToggle) {
+      menuToggle.addEventListener('click', () => {
+        mainNav.classList.toggle('active');
+        menuToggle.classList.toggle('active');
+      });
+    }
+    
+    function showOffers() {
+      document.getElementById('offersModal').style.display = 'flex';
+    }
+    
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+    
+    window.addEventListener('click', (event) => {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+      }
+    });
+    
+    function showVirtualTour() {
+      const virtualTour = document.getElementById('virtualTour');
+      virtualTour.style.display = 'block';
+      virtualTour.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function showOrderConfirmation(message, price) {
+      const popup = document.getElementById('orderConfirmation');
+      const text = document.getElementById('confirmationText');
+      
+      text.textContent = `${message} - ₹${price}`;
+      popup.style.display = 'block';
+      
+      setTimeout(() => {
+        popup.style.display = 'none';
+      }, 3000);
+    }
+
+    // Direct redirect to menu page
+    function redirectToMenu() {
+      window.location.href = 'menu.html';
+    }
+
+    // AI Recommendation Engine - Enhanced with collaborative filtering
+    function analyzeUserPreferences() {
+      // Get orders from localStorage
+      const orders = JSON.parse(localStorage.getItem('orders')) || [];
+      const userOrders = orders.filter(order => order.userName === currentUser);
+      
+      if (userOrders.length === 0) {
+        // If no orders, return popular items from all orders
+        return getPopularItemsFromAllOrders(orders);
+      }
+      
+      // Analyze user's favorite items and categories
+      const itemFrequency = {};
+      const categoryFrequency = {};
+      const userItemRatings = {};
+      
+      userOrders.forEach(order => {
+        if (order.items) {
+          order.items.forEach(item => {
+            // Count item frequency
+            itemFrequency[item.name] = (itemFrequency[item.name] || 0) + (item.quantity || 1);
+            userItemRatings[item.name] = (userItemRatings[item.name] || 0) + (item.quantity || 1);
+            
+            // Find category
+            const menuItem = allItems.find(i => i.name === item.name);
+            if (menuItem) {
+              categoryFrequency[menuItem.category] = (categoryFrequency[menuItem.category] || 0) + (item.quantity || 1);
+            }
+          });
+        }
+      });
+      
+      // Find favorite category
+      let favoriteCategory = null;
+      let maxCategoryCount = 0;
+      for (const [category, count] of Object.entries(categoryFrequency)) {
+        if (count > maxCategoryCount) {
+          maxCategoryCount = count;
+          favoriteCategory = category;
+        }
+      }
+      
+      // Collaborative Filtering: Find similar users based on ordered items
+      const similarUsers = findSimilarUsers(userItemRatings, orders);
+      
+      // Get recommendations from similar users
+      const collaborativeRecommendations = getCollaborativeRecommendations(similarUsers, userItemRatings);
+      
+      // Find top ordered items (exclude already ordered)
+      const orderedItems = new Set(Object.keys(itemFrequency));
+      const recommendations = [];
+      
+      // First: Add items from favorite category that user hasn't ordered
+      if (favoriteCategory) {
+        const categoryItems = allItems.filter(item => 
+          item.category === favoriteCategory && !orderedItems.has(item.name)
+        );
+        recommendations.push(...categoryItems.slice(0, 2));
+      }
+      
+      // Second: Add collaborative filtering recommendations
+      collaborativeRecommendations.forEach(item => {
+        if (!orderedItems.has(item.name) && !recommendations.find(r => r.name === item.name)) {
+          recommendations.push(item);
+        }
+      });
+      
+      // Third: Add popular items from all orders
+      const popularItems = getPopularItemsFromAllOrders(orders);
+      popularItems.forEach(item => {
+        if (!orderedItems.has(item.name) && !recommendations.find(r => r.name === item.name)) {
+          recommendations.push(item);
+        }
+      });
+      
+      // Fourth: Add some random items if needed
+      const allAvailableItems = allItems.filter(item => !orderedItems.has(item.name));
+      while (recommendations.length < 6 && allAvailableItems.length > 0) {
+        const randomItem = allAvailableItems[Math.floor(Math.random() * allAvailableItems.length)];
+        if (!recommendations.find(r => r.name === randomItem.name)) {
+          recommendations.push(randomItem);
+        }
+      }
+      
+      return recommendations.slice(0, 6);
+    }
+    
+    // Find similar users based on ordered items
+    function findSimilarUsers(userItems, allOrders) {
+      const userItemSet = new Set(Object.keys(userItems));
+      const userSimilarity = [];
+      
+      // Group orders by user
+      const userOrdersMap = new Map();
+      allOrders.forEach(order => {
+        if (!userOrdersMap.has(order.userName)) {
+          userOrdersMap.set(order.userName, []);
+        }
+        userOrdersMap.get(order.userName).push(order);
+      });
+      
+      // Calculate similarity with other users
+      for (const [otherUser, orders] of userOrdersMap) {
+        if (otherUser === currentUser) continue;
+        
+        const otherUserItems = new Set();
+        orders.forEach(order => {
+          if (order.items) {
+            order.items.forEach(item => {
+              otherUserItems.add(item.name);
+            });
+          }
+        });
+        
+        // Calculate Jaccard similarity
+        const intersection = new Set([...userItemSet].filter(x => otherUserItems.has(x)));
+        const union = new Set([...userItemSet, ...otherUserItems]);
+        const similarity = intersection.size / union.size;
+        
+        if (similarity > 0) {
+          userSimilarity.push({
+            user: otherUser,
+            similarity: similarity,
+            items: otherUserItems
+          });
+        }
+      }
+      
+      // Sort by similarity and return top 3
+      userSimilarity.sort((a, b) => b.similarity - a.similarity);
+      return userSimilarity.slice(0, 3);
+    }
+    
+    // Get recommendations from similar users
+    function getCollaborativeRecommendations(similarUsers, userItems) {
+      const recommendations = new Map();
+      const userItemSet = new Set(Object.keys(userItems));
+      
+      similarUsers.forEach(similarUser => {
+        for (const item of similarUser.items) {
+          if (!userItemSet.has(item)) {
+            const menuItem = allItems.find(i => i.name === item);
+            if (menuItem) {
+              const currentScore = recommendations.get(item) || 0;
+              recommendations.set(item, {
+                ...menuItem,
+                score: currentScore + similarUser.similarity
+              });
+            }
+          }
+        }
+      });
+      
+      // Convert to array and sort by score
+      const sortedRecommendations = Array.from(recommendations.values())
+        .sort((a, b) => b.score - a.score);
+      
+      return sortedRecommendations.slice(0, 5);
+    }
+    
+    function getPopularItemsFromAllOrders(orders) {
+      const itemSales = {};
+      
+      orders.forEach(order => {
+        if (order.items) {
+          order.items.forEach(item => {
+            itemSales[item.name] = (itemSales[item.name] || 0) + (item.quantity || 1);
+          });
+        }
+      });
+      
+      const sortedItems = Object.entries(itemSales)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+      
+      const popularItems = [];
+      sortedItems.forEach(([name, sales]) => {
+        const menuItem = allItems.find(i => i.name === name);
+        if (menuItem) {
+          popularItems.push({ ...menuItem, sales });
+        }
+      });
+      
+      // If no popular items, return default recommendations
+      if (popularItems.length === 0) {
+        return allItems.slice(0, 6);
+      }
+      
+      return popularItems;
+    }
+    
+    function renderRecommendations() {
+      const container = document.getElementById('recommendationsGrid');
+      const recommendations = analyzeUserPreferences();
+      
+      if (recommendations.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px; grid-column: 1/-1;">
+            <i class="fas fa-utensils" style="font-size: 48px; opacity: 0.5;"></i>
+            <p>No recommendations yet. Start ordering to get personalized suggestions!</p>
+            <button onclick="window.location.href='menu.html'" style="margin-top: 15px; background: linear-gradient(45deg, #e1306c, #fd1d1d); padding: 10px 25px; border: none; border-radius: 25px; color: white; cursor: pointer;">
+              Browse Menu
+            </button>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = recommendations.map(item => `
+        <div class="rec-card" onclick="redirectToMenu()">
+          <img src="${item.image}" class="rec-image" onerror="this.src='https://via.placeholder.com/300x200/405de6/white?text=${encodeURIComponent(item.name)}'">
+          <div class="rec-info">
+            <div class="rec-badge">
+              <i class="fas fa-star"></i> Recommended
+            </div>
+            <div class="rec-name">${item.name}</div>
+            <div class="rec-price">₹${item.price}</div>
+            <div class="rec-stats">
+              <span><i class="fas fa-tag"></i> ${item.category}</span>
+              ${item.sales ? `<span><i class="fas fa-shopping-bag"></i> ${item.sales} orders</span>` : ''}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Chatbot Functions
+    const chatbot = document.getElementById("chatbot");
+    const toggleBtn = document.getElementById("chatbot-toggle");
+    const closeBtn = document.getElementById("chatbot-close");
+    const messagesDiv = document.getElementById("chatbot-messages");
+    
+    if (toggleBtn) toggleBtn.onclick = () => chatbot.style.display = "flex";
+    if (closeBtn) closeBtn.onclick = () => chatbot.style.display = "none";
+    
+    function addMessage(text, sender) {
+      const div = document.createElement("div");
+      div.className = `message ${sender}`;
+      div.textContent = text;
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+    
+    async function sendMessage() {
+      const input = document.getElementById("chatbot-input");
+      const message = input.value.trim();
+      if (!message) return;
+    
+      addMessage(message, "user");
+      input.value = "";
+    
+      addMessage("Thinking...", "bot");
+    
+      try {
+        const response = await fetch("http://localhost:5500/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message })
+        });
+    
+        const data = await response.json();
+        messagesDiv.lastChild.remove();
+        addMessage(data.reply, "bot");
+      } catch (error) {
+        messagesDiv.lastChild.remove();
+        addMessage("Sorry, I'm having trouble connecting. Please try again.", "bot");
+      }
+    }
+    
+    // Voice Recognition
+    let recognition;
+    let isListening = false;
+    const micBtn = document.getElementById("micBtn");
+    const inputBox = document.getElementById("chatbot-input");
+    
+    if ("webkitSpeechRecognition" in window) {
+      recognition = new webkitSpeechRecognition();
+      recognition.lang = "en-IN";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+    }
+    
+    if (micBtn) {
+      micBtn.onclick = () => {
+        if (!recognition) return;
+      
+        if (!isListening) {
+          recognition.start();
+          isListening = true;
+          micBtn.classList.add("listening");
+        } else {
+          recognition.stop();
+          isListening = false;
+          micBtn.classList.remove("listening");
+        }
+      };
+    }
+    
+    if (recognition) {
+      recognition.onresult = (event) => {
+        const spokenText = event.results[0][0].transcript;
+        if (inputBox) inputBox.value = spokenText;
+      };
+      
+      recognition.onerror = (event) => {
+        console.error("Speech error:", event.error);
+      };
+      
+      recognition.onend = () => {
+        isListening = false;
+        if (micBtn) micBtn.classList.remove("listening");
+      };
+    }
+    
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      displayUserInfo();
+      renderRecommendations();
+    });
+  </script>
+</body>
+</html>

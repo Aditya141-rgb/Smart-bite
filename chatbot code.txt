@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SmartBit Restaurant</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Chatbot Styles */
+    #chatbot-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    #chatbot-container {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 300px;
+      height: 400px;
+      background: white;
+      border: 2px solid #ff9800;
+      border-radius: 12px;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    #chat-header {
+      background: #ff9800;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+    #chat-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+    .user-msg {
+      text-align: right;
+      color: blue;
+      margin: 5px 0;
+    }
+    .bot-msg {
+      text-align: left;
+      color: green;
+      margin: 5px 0;
+    }
+    #chat-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+    #chat-input input {
+      flex: 1;
+      border: none;
+      padding: 10px;
+      font-size: 14px;
+    }
+    #chat-input button {
+      background: #ff9800;
+      border: none;
+      color: white;
+      padding: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🍴 SmartBit Restaurant</h1>
+    <nav>
+      <a href="owner-login.html">Owner Login</a>
+    </nav>
+  </header>
+ 
+  <main>
+    <h2>Our Menu</h2>
+    <div class="menu">
+      <div class="item">
+        <img src="grilled-seafood.png" alt="grilled-seafood">
+        <h3>grilled-seafood</h3>
+        <p>₹450</p>
+        <button onclick="addToCart('Pizza', 450)">Add to Cart</button>
+      </div>
+      <div class="item">
+        <img src="em-ginger-fried-img.png" alt="Burger">
+        <h3>ginger-fried</h3>
+        <p>₹350</p>
+        <button onclick="addToCart('Burger', 350)">Add to Cart</button>
+      </div>
+      <div class="item">
+        <img src="https://source.unsplash.com/200x150/?pasta" alt="Pasta">
+        <h3>Pasta</h3>
+        <p>₹200</p>
+        <button onclick="addToCart('Pasta', 200)">Add to Cart</button>
+      </div>
+      <div class="item">
+        <img src="https://source.unsplash.com/200x150/?sandwich" alt="Sandwich">
+        <h3>Sandwich</h3>
+        <p>₹120</p>
+        <button onclick="addToCart('Sandwich', 120)">Add to Cart</button>
+      </div>
+      <div class="item">
+        <img src="https://source.unsplash.com/200x150/?mutton" alt="Mutton">
+        <h3>Mutton</h3>
+        <p>₹400</p>
+        <button onclick="addToCart('Mutton', 400)">Add to Cart</button>
+      </div>
+      <div class="item">
+        <img src="em-coffee-bourbon-img.png" alt="Coffee">
+        <h3>Coffee Bourbon</h3>
+        <p>₹120</p>
+        <button onclick="addToCart('Coffee Bourbon', 120)">Add to Cart</button>
+      </div>
+    </div>
+
+    <section class="cart">
+      <h2>Your Cart</h2>
+      <ul id="cart-items"></ul>
+      <p><strong>Total:</strong> ₹<span id="cart-total">0</span></p>
+      <button onclick="checkout()">Checkout</button>
+    </section>
+
+    <section id="bill" style="display:none;">
+      <h2>Bill Receipt</h2>
+      <p><strong>Bill No:</strong> <span id="billNo"></span></p>
+      <p><strong>Date:</strong> <span id="billDate"></span></p>
+      <ul id="bill-items"></ul>
+      <p><strong>Total Amount:</strong> ₹<span id="bill-total"></span></p>
+    </section>
+  </main>
+
+  <!-- Chatbot Button -->
+  <button id="chatbot-button">💬</button>
+
+  <!-- Chatbot Window -->
+  <div id="chatbot-container">
+    <div id="chat-header">SmartBot 🤖</div>
+    <div id="chat-messages"></div>
+    <div id="chat-input">
+      <input type="text" id="userInput" placeholder="Ask me something...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Toggle chatbot visibility
+    document.getElementById("chatbot-button").onclick = function() {
+      let chat = document.getElementById("chatbot-container");
+      chat.style.display = (chat.style.display === "flex") ? "none" : "flex";
+    };
+
+    function sendMessage() {
+      let input = document.getElementById("userInput");
+      let msg = input.value.trim();
+      if(msg === "") return;
+      
+      let chatMessages = document.getElementById("chat-messages");
+      
+      // User message
+      let userMsg = document.createElement("div");
+      userMsg.className = "user-msg";
+      userMsg.textContent = msg;
+      chatMessages.appendChild(userMsg);
+
+      // Bot reply
+      let botMsg = document.createElement("div");
+      botMsg.className = "bot-msg";
+
+      if(msg.toLowerCase().includes("menu")) {
+        botMsg.textContent = "We serve Pasta, Sandwich, Grilled Seafood, Ginger-fried, Mutton, and Coffee Bourbon.";
+      } else if(msg.toLowerCase().includes("price")) {
+        botMsg.textContent = "Prices: Pasta ₹200, Sandwich ₹120, Grilled Seafood ₹450, Ginger-fried ₹350, Mutton ₹400, Coffee Bourbon ₹120.";
+      } else if(msg.toLowerCase().includes("hello")) {
+        botMsg.textContent = "Hello! 👋 Welcome to SmartBit Restaurant. How can I help you today?";
+      } else {
+        botMsg.textContent = "Sorry, I didn’t understand. Try asking about menu or price.";
+      }
+
+      chatMessages.appendChild(botMsg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      input.value = "";
+    }
+  </script>
+</body>
+</html>

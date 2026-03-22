@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartBite - Login & Registration</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated Background */
+    .animated-bg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      z-index: -1;
+    }
+
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .circle1 {
+      width: 200px;
+      height: 200px;
+      top: -50px;
+      left: -50px;
+    }
+
+    .circle2 {
+      width: 300px;
+      height: 300px;
+      bottom: -100px;
+      right: -100px;
+      animation-delay: 1s;
+    }
+
+    .circle3 {
+      width: 150px;
+      height: 150px;
+      bottom: 50px;
+      left: 100px;
+      animation-delay: 2s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    /* Main Container */
+    .container {
+      width: 100%;
+      max-width: 450px;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Toggle Buttons */
+    .toggle-container {
+      display: flex;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 50px;
+      padding: 5px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: transparent;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .toggle-btn.active {
+      background: white;
+      color: #667eea;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle-btn:not(.active):hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Auth Cards */
+    .auth-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideIn 0.5s ease-out;
+      display: none;
+    }
+
+    .auth-card.active {
+      display: block;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .auth-header h2 {
+      color: #333;
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .auth-header p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    /* Input Groups */
+    .input-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 15px 45px 15px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s;
+      background: white;
+    }
+
+    .input-group input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+      outline: none;
+    }
+
+    .input-group input.valid {
+      border-color: #4CAF50;
+      background-color: rgba(76, 175, 80, 0.05);
+    }
+
+    .input-group input.invalid {
+      border-color: #f44336;
+      background-color: rgba(244, 67, 54, 0.05);
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 15px;
+      top: 47px;
+      color: #999;
+      font-size: 1.2rem;
+      transition: all 0.3s;
+    }
+
+    .input-group input:focus + .input-icon {
+      color: #667eea;
+    }
+
+    /* Password Strength Meter */
+    .strength-meter {
+      margin-top: 5px;
+      height: 4px;
+      background: #e0e0e0;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .strength-bar {
+      height: 100%;
+      width: 0;
+      transition: all 0.3s;
+    }
+
+    .strength-text {
+      font-size: 0.8rem;
+      margin-top: 5px;
+      color: #666;
+    }
+
+    /* Buttons */
+    .auth-btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+    }
+
+    .auth-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .auth-btn:active {
+      transform: translateY(0);
+    }
+
+    .auth-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Links */
+    .auth-links {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .auth-link {
+      color: #667eea;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-block;
+      margin: 5px 10px;
+    }
+
+    .auth-link:hover {
+      color: #764ba2;
+      transform: translateY(-2px);
+    }
+
+    /* Messages */
+    .message {
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 15px;
+      font-size: 0.9rem;
+      display: none;
+      animation: slideIn 0.3s;
+    }
+
+    .message.error {
+      background: #ffebee;
+      color: #f44336;
+      border-left: 4px solid #f44336;
+    }
+
+    .message.success {
+      background: #e8f5e9;
+      color: #4CAF50;
+      border-left: 4px solid #4CAF50;
+    }
+
+    .message.info {
+      background: #e3f2fd;
+      color: #2196F3;
+      border-left: 4px solid #2196F3;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* User Type Toggle */
+    .user-type-toggle {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .type-btn {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      background: white;
+      color: #333;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .type-btn.active {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      border-color: transparent;
+    }
+
+    .type-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .container {
+        padding: 10px;
+      }
+      
+      .auth-card {
+        padding: 25px;
+      }
+      
+      .auth-header h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="animated-bg">
+    <div class="circle circle1"></div>
+    <div class="circle circle2"></div>
+    <div class="circle circle3"></div>
+  </div>
+
+  <div class="container">
+    <!-- Toggle Buttons -->
+    <div class="toggle-container">
+      <button class="toggle-btn active" onclick="switchAuth('login')">🔐 Login</button>
+      <button class="toggle-btn" onclick="switchAuth('register')">📝 Register</button>
+    </div>
+
+    <!-- Login Card -->
+    <div class="auth-card active" id="login-card">
+      <div class="auth-header">
+        <h2>Welcome Back! 👋</h2>
+        <p>Login to access your account</p>
+      </div>
+
+      <!-- User Type Toggle -->
+      <div class="user-type-toggle">
+        <button class="type-btn active" onclick="setUserType('user')" id="user-type-btn">👤 User Login</button>
+        <button class="type-btn" onclick="setUserType('owner')" id="owner-type-btn">👑 Owner Login</button>
+      </div>
+
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" id="login-username" placeholder="Enter your username">
+        <span class="input-icon">👤</span>
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="Enter your password">
+        <span class="input-icon">🔒</span>
+      </div>
+
+      <button class="auth-btn" onclick="handleLogin()" id="login-btn">
+        <span>🚀</span> Login
+      </button>
+
+      <div class="message" id="login-message"></div>
+
+      <div class="auth-links">
+        <a class="auth-link" onclick="switchAuth('register')">📝 New user? Register here</a>
+      </div>
+    </div>
+
+    <!-- Register Card -->
+    <div class="auth-card" id="register-card">
+      <div class="auth-header">
+        <h2>Create Account 🚀</h2>
+        <p>Join SmartBite family today</p>
+      </div>
+
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" id="reg-username" placeholder="Choose a username" oninput="checkUsername()">
+        <span class="input-icon">👤</span>
+      </div>
+
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="Enter your email" oninput="validateEmail()">
+        <span class="input-icon">📧</span>
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="reg-password" placeholder="Create a password">
+        <span class="input-icon">🔒</span>
+        <div class="strength-meter">
+          <div class="strength-bar" id="strength-bar"></div>
+        </div>
+        <div class="strength-text" id="strength-text">Enter password</div>
+      </div>
+
+      <div class="input-group">
+        <label>Confirm Password</label>
+        <input type="password" id="reg-confirm-password" placeholder="Confirm your password" oninput="checkPasswordMatch()">
+        <span class="input-icon">✓</span>
+      </div>
+
+      <button class="auth-btn" onclick="handleRegister()" id="register-btn">
+        <span>✨</span> Create Account
+      </button>
+
+      <div class="message" id="register-message"></div>
+
+      <div class="auth-links">
+        <a class="auth-link" onclick="switchAuth('login')">🔐 Already have an account? Login</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==================== STATE MANAGEMENT ====================
+    let currentUserType = 'user';
+    let users = [];
+
+    // ==================== INITIALIZATION ====================
+    document.addEventListener('DOMContentLoaded', function() {
+      loadUsers();
+      initializeSampleUsers();
+      setupEventListeners();
+      checkLoggedInStatus();
+    });
+
+    function checkLoggedInStatus() {
+      // Check if already logged in
+      if (localStorage.getItem("userLoggedIn") === "true") {
+        window.location.href = "restaurant.html";
+      } else if (localStorage.getItem("ownerLoggedIn") === "true") {
+        window.location.href = "owner-dashboard.html";
+      }
+    }
+
+    function loadUsers() {
+      const stored = localStorage.getItem('restaurantUsers');
+      if (stored) {
+        try {
+          users = JSON.parse(stored);
+          console.log('Users loaded:', users);
+        } catch (e) {
+          console.error('Error loading users:', e);
+          users = [];
+        }
+      } else {
+        users = [];
+      }
+    }
+
+    function initializeSampleUsers() {
+      if (users.length === 0) {
+        const sampleUsers = [
+          {
+            id: '1',
+            username: 'john_doe',
+            email: 'john@example.com',
+            password: 'Password123',
+            type: 'user',
+            createdAt: new Date().toISOString(),
+            lastLogin: null,
+            orderCount: 0,
+            totalSpent: 0
+          },
+          {
+            id: '2',
+            username: 'jane_smith',
+            email: 'jane@example.com',
+            password: 'Test1234',
+            type: 'user',
+            createdAt: new Date().toISOString(),
+            lastLogin: null,
+            orderCount: 0,
+            totalSpent: 0
+          }
+        ];
+        
+        users = sampleUsers;
+        saveUsers();
+        console.log('Sample users initialized');
+      }
+    }
+
+    function saveUsers() {
+      localStorage.setItem('restaurantUsers', JSON.stringify(users));
+      console.log('Users saved:', users);
+    }
+
+    function setupEventListeners() {
+      // Enter key press
+      document.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          if (document.getElementById('login-card').classList.contains('active')) {
+            handleLogin();
+          } else {
+            handleRegister();
+          }
+        }
+      });
+
+      // Input effects
+      const inputs = document.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+          this.parentElement.style.transform = 'scale(1.02)';
+        });
+        input.addEventListener('blur', function() {
+          this.parentElement.style.transform = 'scale(1)';
+        });
+      });
+    }
+
+    // ==================== UI FUNCTIONS ====================
+    function switchAuth(mode) {
+      const loginCard = document.getElementById('login-card');
+      const registerCard = document.getElementById('register-card');
+      const toggleBtns = document.querySelectorAll('.toggle-btn');
+      
+      if (mode === 'login') {
+        loginCard.classList.add('active');
+        registerCard.classList.remove('active');
+        toggleBtns[0].classList.add('active');
+        toggleBtns[1].classList.remove('active');
+      } else {
+        registerCard.classList.add('active');
+        loginCard.classList.remove('active');
+        toggleBtns[1].classList.add('active');
+        toggleBtns[0].classList.remove('active');
+      }
+      
+      clearMessages();
+    }
+
+    function setUserType(type) {
+      currentUserType = type;
+      
+      const userBtn = document.getElementById('user-type-btn');
+      const ownerBtn = document.getElementById('owner-type-btn');
+      
+      if (type === 'user') {
+        userBtn.classList.add('active');
+        ownerBtn.classList.remove('active');
+      } else {
+        ownerBtn.classList.add('active');
+        userBtn.classList.remove('active');
+      }
+    }
+
+    function clearMessages() {
+      document.getElementById('login-message').classList.remove('show');
+      document.getElementById('register-message').classList.remove('show');
+    }
+
+    function showMessage(elementId, message, type) {
+      const msg = document.getElementById(elementId);
+      msg.textContent = message;
+      msg.className = `message ${type} show`;
+    }
+
+    // ==================== VALIDATION FUNCTIONS ====================
+    function checkUsername() {
+      const username = document.getElementById('reg-username').value.trim();
+      const input = document.getElementById('reg-username');
+      
+      if (username.length < 3) {
+        input.classList.remove('valid', 'invalid');
+        return false;
+      }
+      
+      const exists = users.some(u => u.username.toLowerCase() === username.toLowerCase());
+      
+      if (exists) {
+        input.classList.add('invalid');
+        input.classList.remove('valid');
+        return false;
+      } else {
+        input.classList.add('valid');
+        input.classList.remove('invalid');
+        return true;
+      }
+    }
+
+    function validateEmail() {
+      const email = document.getElementById('reg-email').value.trim();
+      const input = document.getElementById('reg-email');
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+      if (!email) {
+        input.classList.remove('valid', 'invalid');
+        return false;
+      }
+      
+      if (regex.test(email)) {
+        input.classList.add('valid');
+        input.classList.remove('invalid');
+        return true;
+      } else {
+        input.classList.add('invalid');
+        input.classList.remove('valid');
+        return false;
+      }
+    }
+
+    function checkPasswordMatch() {
+      const password = document.getElementById('reg-password').value;
+      const confirm = document.getElementById('reg-confirm-password').value;
+      const input = document.getElementById('reg-confirm-password');
+      
+      if (!confirm) {
+        input.classList.remove('valid', 'invalid');
+        return false;
+      }
+      
+      if (password === confirm && password.length > 0) {
+        input.classList.add('valid');
+        input.classList.remove('invalid');
+        return true;
+      } else {
+        input.classList.add('invalid');
+        input.classList.remove('valid');
+        return false;
+      }
+    }
+
+    // ==================== LOGIN HANDLER ====================
+    function handleLogin() {
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      const loginBtn = document.getElementById('login-btn');
+      
+      if (!username || !password) {
+        showMessage('login-message', '❌ Please enter username and password', 'error');
+        return;
+      }
+      
+      // Add loading state
+      loginBtn.innerHTML = '<span class="spinner"></span> Logging in...';
+      loginBtn.disabled = true;
+      
+      setTimeout(() => {
+        if (currentUserType === 'owner') {
+          // Owner login
+          if (username === 'owner' && password === 'adi') {
+            showMessage('login-message', '✅ Owner login successful! Redirecting...', 'success');
+            localStorage.setItem('ownerLoggedIn', 'true');
+            localStorage.setItem('userName', 'Owner');
+            
+            setTimeout(() => {
+              window.location.href = 'owner-dashboard.html';
+            }, 1500);
+          } else {
+            showMessage('login-message', '❌ Invalid owner credentials! Use: owner / adi', 'error');
+            loginBtn.innerHTML = '🚀 Login';
+            loginBtn.disabled = false;
+          }
+        } else {
+          // User login
+          const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+          
+          if (!user) {
+            showMessage('login-message', '❌ User not found! Please register first.', 'error');
+            loginBtn.innerHTML = '🚀 Login';
+            loginBtn.disabled = false;
+          } else if (user.password !== password) {
+            showMessage('login-message', '❌ Incorrect password!', 'error');
+            loginBtn.innerHTML = '🚀 Login';
+            loginBtn.disabled = false;
+          } else {
+            showMessage('login-message', `✅ Welcome back, ${user.username}! Redirecting...`, 'success');
+            
+            localStorage.setItem('userLoggedIn', 'true');
+            localStorage.setItem('userName', user.username);
+            localStorage.setItem('userId', user.id);
+            
+            setTimeout(() => {
+              window.location.href = 'index.html';
+            }, 1500);
+          }
+        }
+      }, 1000);
+    }
+
+    // ==================== REGISTER HANDLER ====================
+    function handleRegister() {
+      const username = document.getElementById('reg-username').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const confirm = document.getElementById('reg-confirm-password').value;
+      const registerBtn = document.getElementById('register-btn');
+      
+      // Validate all fields
+      if (!username || !email || !password || !confirm) {
+        showMessage('register-message', '❌ Please fill in all fields', 'error');
+        return;
+      }
+      
+      if (username.length < 3) {
+        showMessage('register-message', '❌ Username must be at least 3 characters', 'error');
+        return;
+      }
+      
+      if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+        showMessage('register-message', '❌ Username already taken', 'error');
+        return;
+      }
+      
+      const emailValid = validateEmail();
+      if (!emailValid) {
+        showMessage('register-message', '❌ Please enter a valid email address', 'error');
+        return;
+      }
+      
+      if (password !== confirm) {
+        showMessage('register-message', '❌ Passwords do not match', 'error');
+        return;
+      }
+      
+      // Add loading state
+      registerBtn.innerHTML = '<span class="spinner"></span> Creating account...';
+      registerBtn.disabled = true;
+      
+      setTimeout(() => {
+        // Create new user
+        const newUser = {
+          id: Date.now().toString(),
+          username: username,
+          email: email,
+          password: password,
+          type: 'user',
+          createdAt: new Date().toISOString(),
+          lastLogin: null,
+          orderCount: 0,
+          totalSpent: 0
+        };
+        
+        users.push(newUser);
+        saveUsers();
+        
+        showMessage('register-message', '✅ Registration successful! Redirecting to login...', 'success');
+        
+        // Clear registration form
+        document.getElementById('reg-username').value = '';
+        document.getElementById('reg-email').value = '';
+        document.getElementById('reg-password').value = '';
+        document.getElementById('reg-confirm-password').value = '';
+        
+        // Switch to login after delay
+        setTimeout(() => {
+          switchAuth('login');
+          document.getElementById('login-username').value = username;
+          document.getElementById('login-password').value = '';
+          showMessage('login-message', '✅ Registration successful! Please login.', 'info');
+        }, 1500);
+        
+        registerBtn.innerHTML = '✨ Create Account';
+        registerBtn.disabled = false;
+      }, 1000);
+    }
+
+    // Debug function
+    window.debug = function() {
+      console.log('Current users:', users);
+      console.log('LocalStorage users:', JSON.parse(localStorage.getItem('restaurantUsers') || '[]'));
+      console.log('Login status:', {
+        userLoggedIn: localStorage.getItem('userLoggedIn'),
+        ownerLoggedIn: localStorage.getItem('ownerLoggedIn'),
+        userName: localStorage.getItem('userName')
+      });
+    };
+
+    // Clear login data (for testing)
+    window.clearAll = function() {
+      localStorage.removeItem('userLoggedIn');
+      localStorage.removeItem('ownerLoggedIn');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('restaurantUsers');
+      console.log('All data cleared');
+      location.reload();
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartBit Restaurant</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #fafafa;
+      color: #262626;
+      line-height: 1.6;
+    }
+    
+    header {
+      background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: white;
+    }
+    
+    .user-welcome {
+      font-size: 0.9rem;
+    }
+    
+    .logout-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 5px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s;
+    }
+    
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.05);
+    }
+    
+    header h1 {
+      font-size: 1.8rem;
+      background: linear-gradient(45deg, #fff, #ffd6d6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+    }
+    
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      background-color: rgba(255,255,255,0.1);
+      transition: all 0.3s;
+      position: relative;
+      font-size: 0.9rem;
+    }
+    
+    nav a:hover {
+      background-color: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
+    }
+    
+    nav a.notification::after {
+      content: 'New';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #ff3333;
+      color: white;
+      font-size: 0.6rem;
+      padding: 2px 6px;
+      border-radius: 10px;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    
+    .menu-toggle span {
+      width: 100%;
+      height: 3px;
+      background-color: white;
+      border-radius: 5px;
+      transition: all 0.3s;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      position: relative;
+      animation: modalFadeIn 0.3s;
+      color: white;
+    }
+    
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: rgba(255,255,255,0.8);
+    }
+    
+    .close-modal:hover {
+      color: white;
+    }
+    
+    .offer-item {
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 15px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .offer-item h3 {
+      color: #ffd6d6;
+      margin-bottom: 5px;
+      font-size: 1.1rem;
+    }
+    
+    .virtual-tour {
+      padding: 2rem;
+      background-color: white;
+      border-radius: 20px;
+      margin: 2rem 0;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    
+    .tour-container {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+      overflow: hidden;
+      border-radius: 15px;
+      height: 400px;
+      background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    
+    .hero {
+      position: relative;
+      height: 400px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      border-radius: 0 0 30px 30px;
+    }
+    
+    .hero-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.8);
+    }
+    
+    .hero-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+      width: 90%;
+    }
+    
+    .hero-content h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+      background: linear-gradient(45deg, #fff, #ffd6d6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .hero-content p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+      color: #ffd6d6;
+    }
+    
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .feature {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: 1.5rem 1rem;
+      border-radius: 15px;
+      min-width: 120px;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.3s;
+    }
+    
+    .feature:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.25);
+    }
+    
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .feature-text {
+      font-size: 0.9rem;
+      text-align: center;
+      font-weight: 500;
+    }
+    
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    
+    .menu-section { 
+      margin: 50px 0; 
+      padding: 30px;
+      background: white;
+      border-radius: 25px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #f0f0f0;
+    }
+    
+    .menu-section:first-of-type {
+      background: linear-gradient(135deg, #ffffff 0%, #fff9f9 100%);
+      border: 2px solid #ff6b6b;
+      box-shadow: 0 10px 40px rgba(255, 107, 107, 0.1);
+    }
+    
+    .menu-section:first-of-type::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #405de6, #e1306c, #ff6b6b);
+    }
+    
+    .menu-section:first-of-type h2 {
+      position: relative;
+      display: inline-block;
+      padding: 0 20px;
+    }
+    
+    .menu-section:first-of-type h2::before,
+    .menu-section:first-of-type h2::after {
+      content: '✨';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.5rem;
+    }
+    
+    .menu-section:first-of-type h2::before {
+      left: -15px;
+    }
+    
+    .menu-section:first-of-type h2::after {
+      right: -15px;
+    }
+    
+    .menu-section h2 { 
+      margin-bottom: 30px; 
+      padding-bottom: 15px; 
+      color: #e1306c;
+      font-size: 2rem;
+      border-bottom: 3px solid #fd1d1d;
+      display: inline-block;
+      padding-right: 30px;
+      font-weight: 700;
+    }
+    
+    .menu { 
+      display: grid; 
+      grid-template-columns: repeat(5, 1fr); 
+      gap: 25px; 
+      margin-top: 20px;
+    }
+    
+    @media (max-width: 1200px) {
+      .menu {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    
+    @media (max-width: 900px) {
+      .menu {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    @media (max-width: 600px) {
+      .menu {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    .item { 
+      border: none;
+      border-radius: 20px; 
+      padding: 20px; 
+      text-align: center; 
+      background: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: all 0.4s;
+      overflow: hidden;
+      border: 1px solid #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+    
+    .item:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      border-color: #e1306c;
+    }
+    
+    .item img { 
+      width: 100%; 
+      height: 180px; 
+      object-fit: cover; 
+      border-radius: 15px; 
+      background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+      margin-bottom: 15px;
+      transition: transform 0.3s;
+    }
+    
+    .item:hover img {
+      transform: scale(1.05);
+    }
+    
+    .item h3 {
+      margin: 10px 0;
+      color: #262626;
+      font-size: 1.2rem;
+      font-weight: 600;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .item p {
+      font-weight: bold;
+      color: #e1306c;
+      margin: 15px 0;
+      font-size: 1.3rem;
+    }
+    
+    .item button {
+      background: linear-gradient(45deg, #405de6, #833ab4);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600;
+      width: 100%;
+      font-size: 1rem;
+    }
+    
+    .item button:hover {
+      background: linear-gradient(45deg, #833ab4, #405de6);
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(64, 93, 230, 0.4);
+    }
+    
+    .cart, #bill { 
+      margin-top: 50px; 
+      padding: 30px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    
+    .cart h2, #bill h2 {
+      color: #405de6;
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+      border-bottom: 3px solid #833ab4;
+      padding-bottom: 10px;
+      display: inline-block;
+    }
+    
+    #cart-items {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+    
+    #cart-items li {
+      padding: 15px;
+      background-color: #f8f9fa;
+      margin-bottom: 10px;
+      border-radius: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #eee;
+      transition: all 0.3s;
+    }
+    
+    #cart-items li:hover {
+      background-color: #f0f2ff;
+      transform: translateX(5px);
+    }
+    
+    #cart-total {
+      font-size: 1.4rem;
+      color: #e1306c;
+      font-weight: bold;
+    }
+    
+    #tableNo {
+      padding: 12px 20px;
+      border: 2px solid #405de6;
+      border-radius: 25px;
+      margin: 0 10px;
+      font-size: 1rem;
+      width: 150px;
+    }
+    
+    /* Payment Mode Styles */
+    .payment-mode-section {
+      margin: 25px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 15px;
+      border: 1px solid #e6e6e6;
+    }
+    
+    .payment-mode-options {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .payment-option {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      background: white;
+      border: 2px solid #e6e6e6;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      flex: 1;
+      min-width: 120px;
+    }
+    
+    .payment-option:hover {
+      border-color: #405de6;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(64, 93, 230, 0.1);
+    }
+    
+    .payment-option.selected {
+      background: linear-gradient(135deg, #f5f7ff 0%, #f0f2ff 100%);
+      border-color: #405de6;
+      box-shadow: 0 5px 15px rgba(64, 93, 230, 0.2);
+    }
+    
+    .payment-option input[type="radio"] {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+      accent-color: #405de6;
+    }
+    
+    .payment-icon {
+      font-size: 1.3rem;
+      margin-right: 8px;
+    }
+    
+    /* Checkout button */
+    #checkoutBtn {
+      background: linear-gradient(45deg, #4CAF50, #2E7D32);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 600;
+      transition: all 0.3s;
+      margin-top: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    #checkoutBtn:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+    }
+    
+    #checkoutBtn:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    #bill {
+      background: linear-gradient(135deg, #f5f7ff 0%, #f0f2ff 100%);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    #bill p {
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+    }
+    
+    #bill-items li {
+      padding: 12px 0;
+      border-bottom: 1px dashed #ddd;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    /* Bill payment display */
+    .bill-payment-display {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    
+    .payment-cash {
+      background: linear-gradient(45deg, #e8f5e9, #c8e6c9);
+      color: #2e7d32;
+    }
+    
+    .payment-upi {
+      background: linear-gradient(45deg, #e3f2fd, #bbdefb);
+      color: #1565c0;
+    }
+    
+    .payment-card {
+      background: linear-gradient(45deg, #fff3e0, #ffe0b2);
+      color: #ef6c00;
+    }
+    
+    /* Chatbot Styles - UPDATED */
+    .chatbot-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      font-family: Arial, sans-serif;
+    }
+    
+    .chatbot-button {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(45deg, #405de6, #e1306c);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      animation: float 3s ease-in-out infinite;
+      font-size: 1.8rem;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .chatbot-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    }
+    
+    .chatbot-box {
+      width: 380px;
+      height: 500px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      margin-bottom: 15px;
+      position: absolute;
+      bottom: 85px;
+      right: 0;
+    }
+    
+    .chatbot-header {
+      background: linear-gradient(45deg, #405de6, #833ab4);
+      color: white;
+      padding: 20px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.2rem;
+    }
+    
+    .chatbot-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #fafafa;
+    }
+    
+    .message {
+      max-width: 85%;
+      padding: 12px 15px;
+      border-radius: 18px;
+      line-height: 1.4;
+      font-size: 0.95rem;
+    }
+    
+    .bot-message {
+      background: white;
+      border: 1px solid #e6e6e6;
+      align-self: flex-start;
+      border-bottom-left-radius: 5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    
+    .user-message {
+      background: linear-gradient(45deg, #405de6, #833ab4);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 5px;
+      box-shadow: 0 2px 6px rgba(64, 93, 230, 0.2);
+    }
+    
+    .chatbot-input {
+      display: flex;
+      padding: 15px;
+      border-top: 1px solid #e6e6e6;
+      background: white;
+      gap: 8px;
+    }
+    
+    .chatbot-input input {
+      flex: 1;
+      padding: 12px 18px;
+      border: 1px solid #e6e6e6;
+      border-radius: 25px;
+      outline: none;
+      font-size: 0.95rem;
+      transition: all 0.3s;
+    }
+    
+    .chatbot-input input:focus {
+      border-color: #405de6;
+      box-shadow: 0 0 0 2px rgba(64, 93, 230, 0.1);
+    }
+    
+    .chatbot-input button {
+      background: linear-gradient(45deg, #405de6, #833ab4);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      min-width: 60px;
+      font-size: 0.95rem;
+    }
+    
+    .chatbot-input button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 3px 10px rgba(64, 93, 230, 0.2);
+    }
+    
+    /* Mic button in chatbot */
+    .mic-button {
+      background: linear-gradient(45deg, #405de6, #e1306c);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 3px 8px rgba(64, 93, 230, 0.2);
+      font-size: 1.2rem;
+    }
+    
+    .mic-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(225, 48, 108, 0.3);
+    }
+    
+    .mic-button.active {
+      background: linear-gradient(45deg, #e1306c, #405de6);
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(225, 48, 108, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(225, 48, 108, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(225, 48, 108, 0); }
+    }
+    
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+    }
+    
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      background: #405de6;
+      border-radius: 50%;
+      margin: 0 2px;
+      animation: typing 1.4s infinite;
+    }
+    
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
+    }
+    
+    /* Order Confirmation Popup */
+    .order-confirmation-popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(45deg, #4CAF50, #2E7D32);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      z-index: 2000;
+      animation: slideIn 0.3s ease, slideOut 0.3s ease 2.7s;
+      max-width: 250px;
+      display: none;
+    }
+    
+    @keyframes slideIn {
+      0% { transform: translateX(100%); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+      0% { transform: translateX(0); opacity: 1; }
+      100% { transform: translateX(100%); opacity: 0; }
+    }
+    
+    @media (max-width: 768px) {
+      nav {
+        position: fixed;
+        top: 0;
+        right: -250px;
+        width: 250;
+        height: 100vh;
+        background: linear-gradient(45deg, #405de6, #833ab4);
+        flex-direction: column;
+        padding: 2rem;
+        transition: right 0.3s ease;
+        z-index: 100;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+      }
+      
+      nav.active {
+        right: 0;
+      }
+      
+      .menu-toggle {
+        display: flex;
+        z-index: 101;
+      }
+      
+      .menu-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      
+      .menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+      }
+      
+      .menu-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -6px);
+      }
+
+      .header-right {
+        flex-direction: column;
+        gap: 10px;
+        text-align: right;
+      }
+      
+      .menu-section {
+        margin: 20px 0;
+        padding: 15px;
+      }
+      
+      .menu {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .chatbot-box {
+        width: 90%;
+        right: 5%;
+        bottom: 80px;
+        height: 450px;
+      }
+      
+      .payment-mode-options {
+        flex-direction: column;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .menu {
+        grid-template-columns: 1fr;
+      }
+      
+      header h1 {
+        font-size: 1.4rem;
+      }
+      
+      .menu-section h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <h1>🍴 SmartBit Restaurant</h1>
+      <button class="menu-toggle" id="menuToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <nav id="mainNav">
+      <a href="#offers" onclick="showOffers()" class="notification">Special Offers</a>
+      <a href="#virtual-tour" onclick="showVirtualTour()">Virtual Tour</a>
+      <a href="login.html">Switch Account</a>
+    </nav>
+
+    <div class="header-right" id="userInfoSection">
+      <!-- User info will be inserted here by JavaScript -->
+    </div>
+  </header>
+
+  <div class="modal" id="offersModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('offersModal')">&times;</span>
+      <h2>🎉 Special Offers</h2>
+      <div class="offer-item">
+        <h3>Family Feast</h3>
+        <p>Get 20% off on orders above ₹2000. Valid until end of month.</p>
+      </div>
+      <div class="offer-item">
+        <h3>Weekend Special</h3>
+        <p>Buy one main course, get one free every Friday and Saturday.</p>
+      </div>
+      <div class="offer-item">
+        <h3>Student Discount</h3>
+        <p>15% off for students with valid ID card.</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="hero">
+    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmVzdGF1cmFudHxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80" alt="Restaurant Interior" class="hero-image">
+    <div class="hero-content">
+      <h2>Welcome to SmartBit Restaurant</h2>
+      <p>Experience the finest cuisine with a modern twist</p>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">🍽️</div>
+          <div class="feature-text">Fine Dining</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🚚</div>
+          <div class="feature-text">Fast Delivery</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🌱</div>
+          <div class="feature-text">Fresh Ingredients</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">👨‍🍳</div>
+          <div class="feature-text">Expert Chefs</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+   <section class="virtual-tour" id="virtualTour" style="display: none;">
+  <h2>Virtual Tour</h2>
+  <p>Take a look inside our restaurant before you visit</p>
+
+  <div class="tour-container">
+    <img 
+      src="restaurant360.png" 
+      alt="360 degree view of restaurant"
+      style="width: 100%; max-width: 800px; border-radius: 10px;"
+    />
+  </div>
+</section>
+
+    <div class="menu-section">
+      <h2>🥗 Starters</h2>
+      <div class="menu">
+        <div class="item">
+          <img src="Tomato Soup.jpg" alt="Tomato Soup">
+          <h3>Tomato Soup</h3>
+          <p>₹120</p>
+          <button onclick="addToCart('Tomato Soup', 120, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Caesar Salad.jpg" alt="Caesar Salad">
+          <h3>Caesar Salad</h3>
+          <p>₹180</p>
+          <button onclick="addToCart('Caesar Salad', 180, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="spiring rolls.jpg" alt="Spring Rolls">
+          <h3>Spring Rolls</h3>
+          <p>₹150</p>
+          <button onclick="addToCart('Spring Rolls', 150, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="garic.jpg" alt="Garlic Bread">
+          <h3>Garlic Bread</h3>
+          <p>₹130</p>
+          <button onclick="addToCart('Garlic Bread', 130, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="panner butter masala.jpg" alt="Paneer Tikka">
+          <h3>Paneer Tikka</h3>
+          <p>₹200</p>
+          <button onclick="addToCart('Paneer Tikka', 200, false, false)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-section">
+      <h2>🍛 Main Course</h2>
+      <div class="menu">
+        <div class="item">
+          <img src="grilled-seafood.png" alt="Grilled Seafood">
+          <h3>Grilled Seafood</h3>
+          <p>₹450</p>
+          <button onclick="addToCart('Grilled Seafood', 450, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="briyani.jpg" alt="Chicken Biryani">
+          <h3>Chicken Biryani</h3>
+          <p>₹280</p>
+          <button onclick="addToCart('Chicken Biryani', 280, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="panner butter masala.jpg" alt="Paneer Butter Masala">
+          <h3>Paneer Butter Masala</h3>
+          <p>₹250</p>
+          <button onclick="addToCart('Paneer Butter Masala', 250, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Butter Chicken.jpg" alt="Butter Chicken">
+          <h3>Butter Chicken</h3>
+          <p>₹320</p>
+          <button onclick="addToCart('Butter Chicken', 320, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Veg Fried Rice.jpg" alt="Veg Fried Rice">
+          <h3>Veg Fried Rice</h3>
+          <p>₹220</p>
+          <button onclick="addToCart('Veg Fried Rice', 220, false, false)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-section">
+      <h2>☕ Beverages</h2>
+      <div class="menu">
+        <div class="item">
+          <img src="Coffee Bourbon.jpg" alt="Coffee Bourbon">
+          <h3>Coffee Bourbon</h3>
+          <p>₹120</p>
+          <button onclick="addToCart('Coffee Bourbon', 120, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Masala Tea.jpg" alt="Masala Tea">
+          <h3>Masala Tea</h3>
+          <p>₹50</p>
+          <button onclick="addToCart('Masala Tea', 50, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Fresh Orange Juice.jpg" alt="Fresh Orange Juice">
+          <h3>Fresh Orange Juice</h3>
+          <p>₹100</p>
+          <button onclick="addToCart('Fresh Orange Juice', 100, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Cold Coffee.jpg" alt="Cold Coffee">
+          <h3>Cold Coffee</h3>
+          <p>₹150</p>
+          <button onclick="addToCart('Cold Coffee', 150, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Lemon Soda.jpg" alt="Lemon Soda">
+          <h3>Lemon Soda</h3>
+          <p>₹80</p>
+          <button onclick="addToCart('Lemon Soda', 80, false, false)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-section">
+      <h2>🍨 Desserts</h2>
+      <div class="menu">
+        <div class="item">
+          <img src="Chocolate Ice Cream.jpg" alt="Chocolate Ice Cream">
+          <h3>Chocolate Ice Cream</h3>
+          <p>₹150</p>
+          <button onclick="addToCart('Chocolate Ice Cream', 150, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Cheesecake.jpg" alt="Cheesecake">
+          <h3>Cheesecake</h3>
+          <p>₹220</p>
+          <button onclick="addToCart('Cheesecake', 220, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Gulab Jamun.jpg" alt="Gulab Jamun">
+          <h3>Gulab Jamun</h3>
+          <p>₹100</p>
+          <button onclick="addToCart('Gulab Jamun', 100, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Brownie with Ice Cream.jpg" alt="Brownie Ice Cream">
+          <h3>Brownie with Ice Cream</h3>
+          <p>₹180</p>
+          <button onclick="addToCart('Brownie with Ice Cream', 180, false, false)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Rasgulla.jpg" alt="Rasgulla">
+          <h3>Rasgulla</h3>
+          <p>₹90</p>
+          <button onclick="addToCart('Rasgulla', 90, false, false)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+    
+    <section class="cart">
+      <h2>🛒 Your Cart</h2>
+      <ul id="cart-items"></ul>
+      <p><strong>Total:</strong> ₹<span id="cart-total">0</span></p>
+      
+      <div style="margin-top: 20px;">
+        <label for="tableNo">Table No:</label>
+        <input type="text" id="tableNo" placeholder="Enter table number">
+      </div>
+      
+      <!-- Payment Mode Selection - FIXED: No onclick handlers -->
+      <div class="payment-mode-section">
+        <label><strong>Payment Mode:</strong></label>
+        <div class="payment-mode-options">
+          <label class="payment-option">
+            <input type="radio" name="paymentMode" value="Cash" checked>
+            <span class="payment-icon">💵</span>
+            <span>Cash</span>
+          </label>
+          
+          <label class="payment-option">
+            <input type="radio" name="paymentMode" value="UPI">
+            <span class="payment-icon">📱</span>
+            <span>UPI</span>
+          </label>
+          
+          <label class="payment-option">
+            <input type="radio" name="paymentMode" value="Card">
+            <span class="payment-icon">💳</span>
+            <span>Card</span>
+          </label>
+        </div>
+      </div>
+      
+      <button id="checkoutBtn" onclick="checkout()">
+        <span>💳</span> Proceed to Checkout
+      </button>
+    </section>
+
+    <section id="bill" style="display:none;">
+      <h2>🧾 Bill Receipt</h2>
+      
+      <div style="background: linear-gradient(45deg, #f5f7ff 0%, #f0f2ff 100%); padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+        <p><strong>Customer Name:</strong> <span id="billUser"></span></p>
+        <p><strong>Table No:</strong> <span id="billTable"></span></p>
+        <p><strong>Bill No:</strong> <span id="billNo"></span></p>
+        <p><strong>Date:</strong> <span id="billDate"></span></p>
+        <p>
+          <strong>Payment Mode:</strong> 
+          <span id="billPayment" class="bill-payment-display payment-cash">💵 Cash</span>
+        </p>
+      </div>
+      
+      <h3 style="color: #405de6; margin-bottom: 15px;">Order Items:</h3>
+      <ul id="bill-items"></ul>
+      
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e6e6e6;">
+        <p style="font-size: 1.3rem; font-weight: bold;">
+          <strong>Total Amount:</strong> ₹<span id="bill-total"></span>
+        </p>
+      </div>
+      
+      <div style="margin-top: 30px; text-align: center;">
+        <button onclick="printBill()" style="background: linear-gradient(45deg, #405de6, #833ab4); color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-size: 1rem; font-weight: 600; margin-right: 10px;">
+          🖨️ Print Bill
+        </button>
+        <button onclick="newOrder()" style="background: linear-gradient(45deg, #4CAF50, #2E7D32); color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-size: 1rem; font-weight: 600;">
+          🍽️ New Order
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <div id="orderConfirmation" class="order-confirmation-popup">
+    <div style="font-weight: bold; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;">
+      <span>✅</span> <span>Order Updated</span>
+    </div>
+    <div id="confirmationText" style="font-size: 0.9rem;"></div>
+  </div>
+
+  <!-- UPDATED CHATBOT SECTION -->
+  <div class="chatbot-container">
+    <div class="chatbot-box" id="chatbotBox" style="display: none;">
+      <div class="chatbot-header">
+        <span>SmartBit Assistant</span>
+        <button id="closeChatbot" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem;">✕</button>
+      </div>
+      <div class="chatbot-messages" id="chatbotMessages">
+        <div class="message bot-message">
+          Hi there! 👋 I'm your SmartBit assistant. How can I help you today?
+        </div>
+      </div>
+      
+      <div class="chatbot-input">
+        <input type="text" id="chatbotInput" placeholder="Type your message..." onkeypress="handleChatbotKeyPress(event)">
+        <button onclick="sendChatbotMessage()">Send</button>
+        <button class="mic-button" id="micButton" onclick="startVoiceOrder()" title="Voice Order">
+          🎤
+        </button>
+      </div>
+    </div>
+    <div class="chatbot-button" id="chatbotButton">
+      💬
+    </div>
+  </div>
+
+  <script>
+    // ==================== LOGIN CHECK ====================
+    if (localStorage.getItem("userLoggedIn") !== "true" && localStorage.getItem("ownerLoggedIn") !== "true") {
+      window.location.href = "login.html";
+    }
+
+    // Voice assistant settings
+    let voiceAssistantEnabled = localStorage.getItem('voiceAssistantEnabled') !== 'false';
+    let isVoiceOrderActive = false;
+    
+    // Payment mode variable with debouncing
+    let selectedPaymentMode = 'Cash';
+    let currentBillNo = '';
+    let currentTableNo = '';
+    let lastPaymentMode = '';
+    let paymentModeTimeout = null;
+    
+    // Cart functionality
+    let cart = [];
+    let total = 0;
+    
+    // Menu items for voice recognition
+    let voiceMenuItems = {
+      'tomato soup': { name: 'Tomato Soup', price: 120 },
+      'caesar salad': { name: 'Caesar Salad', price: 180 },
+      'spring rolls': { name: 'Spring Rolls', price: 150 },
+      'garlic bread': { name: 'Garlic Bread', price: 130 },
+      'paneer tikka': { name: 'Paneer Tikka', price: 200 },
+      'grilled seafood': { name: 'Grilled Seafood', price: 450 },
+      'chicken biryani': { name: 'Chicken Biryani', price: 280 },
+      'paneer butter masala': { name: 'Paneer Butter Masala', price: 250 },
+      'butter chicken': { name: 'Butter Chicken', price: 320 },
+      'veg fried rice': { name: 'Veg Fried Rice', price: 220 },
+      'coffee bourbon': { name: 'Coffee Bourbon', price: 120 },
+      'masala tea': { name: 'Masala Tea', price: 50 },
+      'fresh orange juice': { name: 'Fresh Orange Juice', price: 100 },
+      'cold coffee': { name: 'Cold Coffee', price: 150 },
+      'lemon soda': { name: 'Lemon Soda', price: 80 },
+      'chocolate ice cream': { name: 'Chocolate Ice Cream', price: 150 },
+      'cheesecake': { name: 'Cheesecake', price: 220 },
+      'gulab jamun': { name: 'Gulab Jamun', price: 100 },
+      'brownie with ice cream': { name: 'Brownie with Ice Cream', price: 180 },
+      'rasgulla': { name: 'Rasgulla', price: 90 }
+    };
+
+    function displayUserInfo() {
+      const userName = localStorage.getItem("userName") || "Guest";
+      const userInfoSection = document.getElementById('userInfoSection');
+      
+      if (userInfoSection) {
+        userInfoSection.innerHTML = `
+          <div class="user-welcome">
+            Welcome, <strong>${userName}</strong>
+          </div>
+          <button class="logout-btn" onclick="userLogout()">Logout</button>
+        `;
+      }
+    }
+
+    function userLogout() {
+      localStorage.removeItem("userLoggedIn");
+      localStorage.removeItem("userName");
+      window.location.href = "login.html";
+    }
+
+    // ==================== RESTAURANT CODE ====================
+    const menuToggle = document.getElementById('menuToggle');
+    const mainNav = document.getElementById('mainNav');
+    
+    menuToggle.addEventListener('click', () => {
+      mainNav.classList.toggle('active');
+      menuToggle.classList.toggle('active');
+    });
+    
+    function showOffers() {
+      document.getElementById('offersModal').style.display = 'flex';
+    }
+    
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+    
+    window.addEventListener('click', (event) => {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+      }
+    });
+    
+    function showVirtualTour() {
+      const virtualTour = document.getElementById('virtualTour');
+      virtualTour.style.display = 'block';
+      virtualTour.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Select Payment Mode - FIXED VERSION with debouncing
+    function selectPaymentMode(mode) {
+      // Prevent duplicate calls within 500ms
+      if (mode === lastPaymentMode && paymentModeTimeout) {
+        return;
+      }
+      
+      lastPaymentMode = mode;
+      selectedPaymentMode = mode;
+      
+      // Clear any existing timeout
+      if (paymentModeTimeout) {
+        clearTimeout(paymentModeTimeout);
+      }
+      
+      // Update radio buttons
+      document.querySelectorAll('input[name="paymentMode"]').forEach(radio => {
+        radio.checked = radio.value === mode;
+      });
+      
+      // Update label styling
+      document.querySelectorAll('.payment-option').forEach(option => {
+        option.classList.remove('selected');
+      });
+      
+      const selectedOption = document.querySelector(`.payment-option input[value="${mode}"]`);
+      if (selectedOption) {
+        selectedOption.parentElement.classList.add('selected');
+      }
+      
+      // Voice feedback - with debouncing
+      if (voiceAssistantEnabled) {
+        // Debounce the speech to prevent duplicates
+        paymentModeTimeout = setTimeout(() => {
+          speak(`Payment mode set to ${mode}`);
+          paymentModeTimeout = null;
+        }, 100);
+      }
+    }
+    
+    // Cart functionality
+    function speak(text) {
+      if ('speechSynthesis' in window && voiceAssistantEnabled) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-IN";
+        utterance.rate = 1;
+        utterance.pitch = 1;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+    
+    function addToCart(name, price, isVoiceOrder = false, skipVoiceFeedback = false) {
+      // Check if item already in cart
+      const existingItem = cart.find(item => item.name === name);
+      
+      if (existingItem) {
+        // If item exists, increase quantity instead of price
+        existingItem.quantity++;
+        existingItem.totalPrice = existingItem.price * existingItem.quantity;
+        total += price;
+        
+        if (isVoiceOrder && !skipVoiceFeedback) {
+          // DON'T call speak() here - let the caller handle it
+        } else if (!skipVoiceFeedback) {
+          showOrderConfirmation(`Another ${name} added`, price);
+        }
+      } else {
+        // Add new item to cart
+        cart.push({ 
+          name: name, 
+          price: price,
+          quantity: 1,
+          totalPrice: price
+        });
+        total += price;
+        
+        if (isVoiceOrder && !skipVoiceFeedback) {
+          // DON'T call speak() here - let the caller handle it
+        } else if (!skipVoiceFeedback) {
+          showOrderConfirmation(name, price);
+        }
+      }
+      
+      updateCart();
+    }
+    
+    function changeQuantity(index, change, skipVoiceFeedback = false) {
+      const item = cart[index];
+      const newQuantity = item.quantity + change;
+      
+      if (newQuantity < 1) {
+        // If quantity would be 0, remove the item
+        removeFromCart(index, skipVoiceFeedback);
+        return;
+      }
+      
+      // Update quantity
+      item.quantity = newQuantity;
+      const oldTotalPrice = item.totalPrice;
+      item.totalPrice = item.price * newQuantity;
+      
+      // Update total
+      total = total - oldTotalPrice + item.totalPrice;
+      
+      updateCart();
+      if (!skipVoiceFeedback) {
+        showOrderConfirmation(`${item.name} quantity: ${newQuantity}`, item.totalPrice);
+      }
+    }
+    
+    function removeFromCart(index, skipVoiceFeedback = false) {
+      const item = cart[index];
+      total -= item.totalPrice;
+      
+      cart.splice(index, 1);
+      updateCart();
+      if (!skipVoiceFeedback) {
+        showOrderConfirmation(`${item.name} removed`, item.totalPrice);
+      }
+    }
+    
+    function updateCart() {
+      const cartItems = document.getElementById('cart-items');
+      const cartTotal = document.getElementById('cart-total');
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      
+      cartItems.innerHTML = '';
+      cart.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div style="flex: 1;">
+            <strong>${item.name}</strong><br>
+            <small>₹${item.price} × ${item.quantity} = ₹${item.totalPrice}</small>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button onclick="changeQuantity(${index}, -1)" style="padding: 5px 10px; background: #405de6; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">
+              -
+            </button>
+            <span style="min-width: 30px; text-align: center;">${item.quantity}</span>
+            <button onclick="changeQuantity(${index}, 1)" style="padding: 5px 10px; background: #405de6; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">
+              +
+            </button>
+            <button onclick="removeFromCart(${index})" style="padding: 5px 10px; background: #ff4444; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.8rem; margin-left: 10px;">
+              Remove
+            </button>
+          </div>
+        `;
+        cartItems.appendChild(li);
+      });
+      
+      cartTotal.textContent = total;
+      
+      // Enable/disable checkout button based on cart
+      if (cart.length === 0) {
+        checkoutBtn.disabled = true;
+        checkoutBtn.innerHTML = '<span>🛒</span> Cart is Empty';
+      } else {
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = '<span>💳</span> Proceed to Checkout';
+      }
+    }
+    
+    function showOrderConfirmation(itemName, price) {
+      const popup = document.getElementById('orderConfirmation');
+      const text = document.getElementById('confirmationText');
+      
+      text.textContent = `${itemName} - ₹${price}`;
+      popup.style.display = 'block';
+      
+      setTimeout(() => {
+        popup.style.display = 'none';
+      }, 3000);
+    }
+    
+    // Checkout function - FIXED VERSION
+    async function checkout() {
+      const tableNo = document.getElementById('tableNo').value;
+      if (!tableNo) {
+        alert('Please enter a table number');
+        return;
+      }
+      
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+      
+      currentTableNo = tableNo;
+      
+      // Save cart items for bill generation BEFORE clearing
+      const cartItemsForBill = JSON.parse(JSON.stringify(cart));
+      const totalForBill = total;
+      
+      try {
+        const response = await fetch('http://localhost:4000/api/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            userName: localStorage.getItem("userName") || "Guest",
+            tableNo: tableNo,
+            items: cartItemsForBill, // Use saved cart items
+            total: totalForBill,
+            paymentMode: selectedPaymentMode
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          currentBillNo = result.order.billNo;
+          generateBill(tableNo, result.order.billNo, cartItemsForBill, totalForBill, true);
+        } else {
+          alert('Error saving order: ' + result.error);
+        }
+      } catch (error) {
+        console.log("Server not available, using localStorage fallback");
+        currentBillNo = 'SB' + Date.now();
+        generateBill(tableNo, currentBillNo, cartItemsForBill, totalForBill, false);
+      }
+    }
+    
+    // Generate Bill function - FIXED VERSION
+    function generateBill(tableNo, billNo, cartItemsForBill, totalForBill, isServerSaved = true) {
+      // Update bill details
+      document.getElementById('billTable').textContent = tableNo;
+      document.getElementById('billUser').textContent = localStorage.getItem("userName") || "Guest";
+      document.getElementById('billNo').textContent = billNo;
+      document.getElementById('billDate').textContent = new Date().toLocaleString();
+      document.getElementById('bill-total').textContent = totalForBill; // Use saved total
+      
+      // Update payment mode display
+      const billPaymentElement = document.getElementById('billPayment');
+      let paymentIcon = '';
+      let paymentClass = '';
+      
+      switch(selectedPaymentMode) {
+        case 'Cash':
+          paymentIcon = '💵';
+          paymentClass = 'payment-cash';
+          break;
+        case 'UPI':
+          paymentIcon = '📱';
+          paymentClass = 'payment-upi';
+          break;
+        case 'Card':
+          paymentIcon = '💳';
+          paymentClass = 'payment-card';
+          break;
+      }
+      
+      billPaymentElement.className = `bill-payment-display ${paymentClass}`;
+      billPaymentElement.innerHTML = `${paymentIcon} ${selectedPaymentMode}`;
+      
+      // Update bill items - use the saved cart items
+      const billItems = document.getElementById('bill-items');
+      billItems.innerHTML = '';
+      
+      // Check if cartItemsForBill is defined and has items
+      if (cartItemsForBill && cartItemsForBill.length > 0) {
+        cartItemsForBill.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.name} (${item.quantity} × ₹${item.price}) = ₹${item.totalPrice}`;
+          li.style.padding = '10px 0';
+          li.style.borderBottom = '1px solid #eee';
+          billItems.appendChild(li);
+        });
+      } else {
+        // Fallback: use current cart if available
+        if (cart && cart.length > 0) {
+          cart.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.name} (${item.quantity} × ₹${item.price}) = ₹${item.totalPrice}`;
+            li.style.padding = '10px 0';
+            li.style.borderBottom = '1px solid #eee';
+            billItems.appendChild(li);
+          });
+        } else {
+          // Show empty message
+          const li = document.createElement('li');
+          li.textContent = 'No items in order';
+          li.style.padding = '10px 0';
+          li.style.color = '#999';
+          li.style.fontStyle = 'italic';
+          billItems.appendChild(li);
+        }
+      }
+      
+      // Save order to localStorage
+      let orders = JSON.parse(localStorage.getItem('orders')) || [];
+      orders.push({
+        userName: localStorage.getItem("userName") || "Guest",
+        tableNo: tableNo,
+        billNo: billNo,
+        date: new Date().toLocaleString(),
+        items: cartItemsForBill || cart, // Save the cart items
+        total: totalForBill || total, // Save the total
+        paymentMode: selectedPaymentMode,
+        status: 'completed'
+      });
+      localStorage.setItem('orders', JSON.stringify(orders));
+      
+      // Show bill
+      document.getElementById('bill').style.display = 'block';
+      document.getElementById('bill').scrollIntoView({ behavior: 'smooth' });
+      
+      // Show success message
+      showOrderConfirmation(`Order placed! Table: ${tableNo}`, totalForBill || total);
+      
+      // Clear cart only after bill is generated
+      cart = [];
+      total = 0;
+      updateCart();
+      document.getElementById('tableNo').value = '';
+      
+      // Voice confirmation
+      if (voiceAssistantEnabled) {
+        speak(`Order placed successfully for table ${tableNo}. Payment mode: ${selectedPaymentMode}`);
+      }
+    }
+    
+    // Print Bill function - FIXED VERSION
+    function printBill() {
+      // Get cart items from localStorage for the current bill
+      const orders = JSON.parse(localStorage.getItem('orders')) || [];
+      const currentOrder = orders.find(order => order.billNo === currentBillNo);
+      const itemsToPrint = currentOrder ? currentOrder.items : [];
+      const totalToPrint = currentOrder ? currentOrder.total : total;
+      
+      const printContent = `
+        <html>
+        <head>
+          <title>SmartBit Restaurant - Bill</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            .receipt { max-width: 300px; margin: 0 auto; }
+            .header { text-align: center; margin-bottom: 20px; }
+            .header h1 { color: #405de6; margin: 0; }
+            .details { margin: 20px 0; }
+            .details p { margin: 5px 0; display: flex; justify-content: space-between; }
+            .items { margin: 15px 0; }
+            .item { padding: 5px 0; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; }
+            .total { font-weight: bold; font-size: 1.2em; border-top: 2px solid #000; padding-top: 10px; }
+            .payment-info { background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 10px 0; }
+            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 0.9em; }
+          </style>
+        </head>
+        <body>
+          <div class="receipt">
+            <div class="header">
+              <h1>SmartBit Restaurant</h1>
+              <p>Bill Receipt</p>
+            </div>
+            <div class="details">
+              <p><span>Customer:</span> <span>${localStorage.getItem("userName") || "Guest"}</span></p>
+              <p><span>Table No:</span> <span>${currentTableNo}</span></p>
+              <p><span>Bill No:</span> <span>${currentBillNo}</span></p>
+              <p><span>Date:</span> <span>${new Date().toLocaleString()}</span></p>
+            </div>
+            <div class="items">
+              ${itemsToPrint.map(item => `<div class="item"><span>${item.name} (${item.quantity})</span><span>₹${item.totalPrice}</span></div>`).join('')}
+            </div>
+            <div class="total">
+              <p><span>Total Amount:</span> <span>₹${totalToPrint}</span></p>
+            </div>
+            <div class="payment-info">
+              <p><span>Payment Mode:</span> <span>${selectedPaymentMode}</span></p>
+            </div>
+            <div class="footer">
+              <p>Thank you for visiting!</p>
+              <p>smartbit123@gmail.com</p>
+              <p>+91 98765 43210</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+      
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      printWindow.print();
+    }
+    
+    // New Order function
+    function newOrder() {
+      document.getElementById('bill').style.display = 'none';
+      document.querySelector('.cart').scrollIntoView({ behavior: 'smooth' });
+      
+      // Reset payment mode to default
+      selectPaymentMode('Cash');
+    }
+    
+    // ==================== CHATBOT WITH API ====================
+    
+    let isChatbotTyping = false;
+    
+    // Chatbot elements
+    const chatbotButton = document.getElementById('chatbotButton');
+    const chatbotBox = document.getElementById('chatbotBox');
+    const closeChatbot = document.getElementById('closeChatbot');
+    const chatbotMessages = document.getElementById('chatbotMessages');
+    const chatbotInput = document.getElementById('chatbotInput');
+    const micButton = document.getElementById('micButton');
+    
+    // Chatbot toggle
+    chatbotButton.addEventListener('click', () => {
+      chatbotBox.style.display = chatbotBox.style.display === 'flex' ? 'none' : 'flex';
+    });
+    
+    closeChatbot.addEventListener('click', () => {
+      chatbotBox.style.display = 'none';
+    });
+    
+    // Handle Enter key in chatbot
+    function handleChatbotKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendChatbotMessage();
+      }
+    }
+    
+    // Send message to chatbot API
+    async function sendChatbotMessage() {
+      const message = chatbotInput.value.trim();
+      if (!message) return;
+      
+      // Add user message to chat
+      addChatbotMessage(message, 'user');
+      chatbotInput.value = '';
+      
+      // Show typing indicator
+      showTypingIndicator();
+      
+      try {
+        // Call the chatbot API
+        const response = await fetch('http://localhost:5000/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: message,
+            cart: cart,
+            total: total,
+            tableNo: document.getElementById('tableNo').value || '',
+            paymentMode: selectedPaymentMode
+          })
+        });
+        
+        const data = await response.json();
+        
+        // Remove typing indicator
+        removeTypingIndicator();
+        
+        // Add bot response
+        addChatbotMessage(data.response, 'bot');
+        
+        // Handle special actions
+        if (data.action === 'add_to_cart') {
+          const itemName = data.item;
+          const itemPrice = data.price || 0;
+          addToCart(itemName, itemPrice, false, true);
+          showOrderConfirmation(itemName, itemPrice);
+        }
+        else if (data.action === 'remove_from_cart') {
+          const itemIndex = cart.findIndex(item => item.name.toLowerCase() === data.item.toLowerCase());
+          if (itemIndex !== -1) {
+            removeFromCart(itemIndex, true);
+            showOrderConfirmation(`${data.item} removed`, cart[itemIndex]?.price || 0);
+          }
+        }
+        else if (data.action === 'checkout') {
+          if (cart.length > 0) {
+            checkout();
+          }
+        }
+        
+      } catch (error) {
+        console.error('Chatbot API error:', error);
+        removeTypingIndicator();
+        
+        // Fallback response
+        addChatbotMessage("I'm having trouble connecting right now. Please try again or use the menu to place your order.", 'bot');
+      }
+    }
+    
+    // Add message to chatbot
+    function addChatbotMessage(text, sender) {
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('message');
+      messageElement.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+      messageElement.textContent = text;
+      chatbotMessages.appendChild(messageElement);
+      chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }
+    
+    // Show typing indicator
+    function showTypingIndicator() {
+      if (isChatbotTyping) return;
+      
+      isChatbotTyping = true;
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'typing-indicator';
+      typingDiv.id = 'typingIndicator';
+      typingDiv.innerHTML = `
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      `;
+      chatbotMessages.appendChild(typingDiv);
+      chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }
+    
+    // Remove typing indicator
+    function removeTypingIndicator() {
+      isChatbotTyping = false;
+      const typingIndicator = document.getElementById('typingIndicator');
+      if (typingIndicator) {
+        typingIndicator.remove();
+      }
+    }
+    
+    // Voice order function
+    async function startVoiceOrder() {
+      const micButton = document.getElementById('micButton');
+      
+      if (isVoiceOrderActive) {
+        addChatbotMessage("Please wait, I'm already processing a voice command.", 'bot');
+        return;
+      }
+      
+      isVoiceOrderActive = true;
+      micButton.classList.add('active');
+      micButton.disabled = true;
+      
+      addChatbotMessage("🎤 Listening... Please speak your order", 'bot');
+      
+      try {
+        const response = await fetch('http://localhost:5000/voice-order');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+          // Process the voice command
+          const command = data.command || 'add';
+          const item = data.item;
+          const quantity = data.quantity || 1;
+          const itemData = voiceMenuItems[item.toLowerCase()];
+          
+          if (itemData) {
+            if (command === 'add') {
+              for (let i = 0; i < quantity; i++) {
+                addToCart(itemData.name, itemData.price, true, true);
+              }
+              addChatbotMessage(`✅ Added ${quantity} ${itemData.name}(s) to your cart`, 'bot');
+              speak(`Added ${quantity} ${itemData.name} to cart`);
+            } else if (command === 'remove') {
+              const itemIndex = cart.findIndex(cartItem => 
+                cartItem.name.toLowerCase() === itemData.name.toLowerCase()
+              );
+              
+              if (itemIndex !== -1) {
+                const cartItem = cart[itemIndex];
+                const currentQuantity = cartItem.quantity;
+                
+                if (currentQuantity > quantity) {
+                  changeQuantity(itemIndex, -quantity, true);
+                  addChatbotMessage(`➖ Removed ${quantity} ${itemData.name}(s) from cart`, 'bot');
+                  speak(`Removed ${quantity} ${itemData.name} from cart`);
+                } else {
+                  removeFromCart(itemIndex, true);
+                  addChatbotMessage(`🗑️ Removed ${itemData.name} from cart`, 'bot');
+                  speak(`Removed ${itemData.name} from cart`);
+                }
+              } else {
+                addChatbotMessage(`❌ ${itemData.name} not found in your cart`, 'bot');
+                speak(`${itemData.name} not found in your cart`);
+              }
+            }
+          } else {
+            addChatbotMessage(`❌ I couldn't find "${item}" in our menu. Please try again.`, 'bot');
+            speak(`Item ${item} not found in menu`);
+          }
+        } else {
+          addChatbotMessage("❌ I couldn't understand that. Please try again.", 'bot');
+          speak("I couldn't understand that. Please try again.");
+        }
+      } catch (error) {
+        console.error('Voice order error:', error);
+        addChatbotMessage("⚠️ Voice service is currently unavailable. Please type your order instead.", 'bot');
+        speak("Voice service unavailable. Please type your order.");
+      } finally {
+        micButton.classList.remove('active');
+        micButton.disabled = false;
+        isVoiceOrderActive = false;
+      }
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      displayUserInfo();
+      
+      // Initialize payment mode
+      selectPaymentMode('Cash');
+      
+      // Initialize cart
+      updateCart();
+      
+      // Initialize chatbot with welcome message
+      addChatbotMessage("Hello! I can help you with:\n• Placing orders\n• Menu suggestions\n• Checking your cart\n• Payment options\n• Restaurant information\n\nTry saying: 'Add tomato soup' or 'What's in my cart?'", 'bot');
+      
+      // Add event listeners for payment mode radio buttons
+      document.querySelectorAll('input[name="paymentMode"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+          if (this.checked) {
+            selectPaymentMode(this.value);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

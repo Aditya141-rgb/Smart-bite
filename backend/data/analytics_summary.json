@@ -1,0 +1,17 @@
+{
+  "total_orders": 20,
+  "total_revenue": 12320,
+  "average_order_value": 616,
+  "total_items_sold": 67,
+  "feedback_stats": {
+    "total_feedback": 19,
+    "average_rating": 3.11,
+    "five_stars": 2,
+    "four_stars": 5,
+    "three_stars": 7,
+    "two_stars": 3,
+    "one_star": 2
+  },
+  "last_updated": "2026-03-21T19:43:24.528Z",
+  "message": "Basic analytics with feedback"
+}

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Feedback - SmartBit Admin</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f2ff 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: linear-gradient(45deg, #405de6, #833ab4);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 2px solid #f0f0f0;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            border-color: #405de6;
+        }
+        
+        .stat-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #405de6;
+            margin: 15px 0;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .rating-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        
+        .star {
+            color: #ffd700;
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        
+        .feedback-table {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f8f9fa;
+            color: #405de6;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        tr:hover {
+            background: #f5f7ff;
+        }
+        
+        .feedback-text {
+            max-width: 300px;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .feedback-expanded {
+            white-space: normal;
+            max-width: 500px;
+        }
+        
+        .view-more {
+            color: #405de6;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.9rem;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #405de6, #833ab4);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(64, 93, 230, 0.3);
+        }
+        
+        .btn-refresh {
+            background: linear-gradient(45deg, #4CAF50, #2E7D32);
+        }
+        
+        .btn-export {
+            background: linear-gradient(45deg, #ff9800, #f57c00);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+            font-size: 1.2rem;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 50px;
+            color: #ff4444;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <span>⭐</span>
+                Customer Feedback Analysis
+                <small style="font-size: 1rem; opacity: 0.9;">SmartBit Restaurant</small>
+            </h1>
+            <p style="opacity: 0.9;">View and analyze customer feedback to improve service quality</p>
+        </header>
+        
+        <div class="controls">
+            <button onclick="loadFeedback()" class="btn-refresh">
+                🔄 Refresh Data
+            </button>
+            <button onclick="exportFeedback()" class="btn-export">
+                📊 Export to CSV
+            </button>
+        </div>
+        
+        <div class="stats-container" id="statsContainer">
+            <div class="stat-card">
+                <div class="stat-label">Total Feedback</div>
+                <div class="stat-value" id="totalFeedback">0</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Average Rating</div>
+                <div class="stat-value" id="avgRating">0.00</div>
+                <div class="rating-display" id="avgStars"></div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">5 Star Ratings</div>
+                <div class="stat-value" id="fiveStars">0</div>
+                <div class="stat-label">Excellent</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Latest Feedback</div>
+                <div class="stat-value" id="latestDate">-</div>
+                <div class="stat-label">Most Recent</div>
+            </div>
+        </div>
+        
+        <div class="feedback-table">
+            <h2 style="color: #405de6; margin-bottom: 25px;">📋 All Feedback Entries</h2>
+            <div id="feedbackTable">
+                <div class="loading">⏳ Loading feedback data...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadFeedback() {
+            try {
+                document.getElementById('feedbackTable').innerHTML = 
+                    '<div class="loading">⏳ Loading feedback data...</div>';
+                
+                // Load feedback data
+                const response = await fetch('http://localhost:5500/api/feedback');
+                const data = await response.json();
+                
+                if (data.success && data.feedback) {
+                    displayFeedback(data.feedback);
+                    updateStats(data.feedback);
+                } else {
+                    document.getElementById('feedbackTable').innerHTML = 
+                        '<div class="error">❌ Failed to load feedback data</div>';
+                }
+            } catch (error) {
+                console.error('Error loading feedback:', error);
+                document.getElementById('feedbackTable').innerHTML = 
+                    '<div class="error">❌ Error loading feedback. Check server connection.</div>';
+            }
+        }
+        
+        function displayFeedback(feedback) {
+            if (feedback.length === 0) {
+                document.getElementById('feedbackTable').innerHTML = 
+                    '<div class="loading">📝 No feedback received yet</div>';
+                return;
+            }
+            
+            const tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Customer</th>
+                            <th>Table</th>
+                            <th>Bill No</th>
+                            <th>Rating</th>
+                            <th>Feedback</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${feedback.map(item => `
+                            <tr>
+                                <td><strong>${item.id || 'N/A'}</strong></td>
+                                <td>${item.userName || 'Guest'}</td>
+                                <td>${item.tableNo || '-'}</td>
+                                <td>${item.billNo || '-'}</td>
+                                <td>
+                                    <div class="rating-display">
+                                        ${'★'.repeat(item.rating)}${'☆'.repeat(5 - item.rating)}
+                                    </div>
+                                    <small>${item.rating}/5</small>
+                                </td>
+                                <td class="feedback-text">
+                                    ${item.feedback || 'No comment'}
+                                </td>
+                                <td>${item.date || '-'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            document.getElementById('feedbackTable').innerHTML = tableHTML;
+        }
+        
+        function updateStats(feedback) {
+            const total = feedback.length;
+            
+            if (total === 0) {
+                document.getElementById('totalFeedback').textContent = '0';
+                document.getElementById('avgRating').textContent = '0.00';
+                document.getElementById('fiveStars').textContent = '0';
+                document.getElementById('latestDate').textContent = '-';
+                document.getElementById('avgStars').innerHTML = '';
+                return;
+            }
+            
+            // Calculate average rating
+            const totalRating = feedback.reduce((sum, item) => sum + (item.rating || 0), 0);
+            const avgRating = (totalRating / total).toFixed(2);
+            
+            // Count 5-star ratings
+            const fiveStars = feedback.filter(item => item.rating === 5).length;
+            
+            // Get latest date
+            const latest = feedback.reduce((latest, item) => {
+                const itemDate = new Date(item.timestamp || item.date);
+                return itemDate > latest.date ? { date: itemDate, item } : latest;
+            }, { date: new Date(0) });
+            
+            // Update DOM
+            document.getElementById('totalFeedback').textContent = total;
+            document.getElementById('avgRating').textContent = avgRating;
+            document.getElementById('fiveStars').textContent = fiveStars;
+            document.getElementById('latestDate').textContent = 
+                latest.item ? latest.item.date.split(',')[0] : '-';
+            
+            // Update star display
+            const starRating = Math.round(parseFloat(avgRating));
+            document.getElementById('avgStars').innerHTML = 
+                '★'.repeat(starRating) + '☆'.repeat(5 - starRating);
+        }
+        
+        function exportFeedback() {
+            alert('Export feature will be implemented soon!');
+        }
+        
+        // Load feedback on page load
+        document.addEventListener('DOMContentLoaded', loadFeedback);
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadFeedback, 30000);
+    </script>
+</body>
+</html>

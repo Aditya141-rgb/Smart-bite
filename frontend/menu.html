@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartBite Restaurant - Menu</title>
+  <style>
+    /* Instagram-inspired color variables */
+    :root {
+      --insta-purple: #833ab4;
+      --insta-pink: #e1306c;
+      --insta-orange: #fd1d1d;
+      --insta-yellow: #fdcb6e;
+      --insta-blue: #405de6;
+      --bg-light: #fafafa;
+      --bg-dark: #0a0a0a;
+      --card-light: #ffffff;
+      --card-dark: #1a1a1a;
+      --card-darker: #2d2d2d;
+      --text-light: #262626;
+      --text-dark: #e0e0e0;
+    }
+
+    #micBtn {
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      transition: all 0.3s;
+    }
+
+    #micBtn.listening {
+      background: #4CAF50;
+      animation: pulse 1.5s infinite;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+      line-height: 1.6;
+      transition: all 0.3s ease;
+    }
+    
+    body.light-mode {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+    }
+    
+    header {
+      background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: white;
+    }
+    
+    .user-welcome {
+      font-size: 0.9rem;
+    }
+    
+    .logout-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 5px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s;
+    }
+    
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.05);
+    }
+    
+    .dark-mode-toggle {
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 5px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .dark-mode-toggle:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.05);
+    }
+    
+    header h1 {
+      font-size: 1.8rem;
+      background: linear-gradient(45deg, #fff, #ffd6d6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      background-color: rgba(255,255,255,0.1);
+      transition: all 0.3s;
+      position: relative;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    
+    nav a:hover {
+      background-color: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
+    }
+    
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    
+    .menu-toggle span {
+      width: 100%;
+      height: 3px;
+      background-color: white;
+      border-radius: 5px;
+      transition: all 0.3s;
+    }
+    
+    .hero {
+      position: relative;
+      height: 300px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      border-radius: 0 0 30px 30px;
+    }
+    
+    .hero-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.5);
+    }
+    
+    .hero-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+      width: 90%;
+    }
+    
+    .hero-content h2 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(45deg, #fff, #ffd6d6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    
+    .menu-section { 
+      margin: 50px 0; 
+      padding: 30px;
+      background: var(--card-dark);
+      border-radius: 25px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s;
+    }
+    
+    body.light-mode .menu-section {
+      background: white;
+      border-color: #f0f0f0;
+    }
+    
+    .menu-section:first-of-type {
+      background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
+      border: 2px solid #e1306c;
+      box-shadow: 0 10px 40px rgba(225, 48, 108, 0.2);
+    }
+    
+    body.light-mode .menu-section:first-of-type {
+      background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
+      border-color: #ff6b6b;
+    }
+    
+    .menu-section:first-of-type::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #405de6, #e1306c, #ff6b6b);
+    }
+    
+    .menu-section h2 { 
+      margin-bottom: 30px; 
+      padding-bottom: 15px; 
+      background: linear-gradient(45deg, #e1306c, #fd1d1d);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 2rem;
+      border-bottom: 3px solid #e1306c;
+      display: inline-block;
+      padding-right: 30px;
+      font-weight: 700;
+    }
+    
+    .menu { 
+      display: grid; 
+      grid-template-columns: repeat(5, 1fr); 
+      gap: 25px; 
+      margin-top: 20px;
+    }
+    
+    @media (max-width: 1200px) {
+      .menu { grid-template-columns: repeat(4, 1fr); }
+    }
+    
+    @media (max-width: 900px) {
+      .menu { grid-template-columns: repeat(3, 1fr); }
+    }
+    
+    @media (max-width: 600px) {
+      .menu { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    .item { 
+      border: none;
+      border-radius: 20px; 
+      padding: 20px; 
+      text-align: center; 
+      background: var(--card-darker);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      transition: all 0.4s;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+    
+    body.light-mode .item {
+      background: white;
+      border-color: #f0f0f0;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .item:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      border-color: #e1306c;
+    }
+    
+    .item img { 
+      width: 100%; 
+      height: 180px; 
+      object-fit: cover; 
+      border-radius: 15px; 
+      background: linear-gradient(45deg, #405de6, #e1306c);
+      margin-bottom: 15px;
+      transition: transform 0.3s;
+    }
+    
+    .item:hover img {
+      transform: scale(1.05);
+    }
+    
+    .item h3 {
+      margin: 10px 0;
+      color: #ffffff;
+      font-size: 1.2rem;
+      font-weight: 600;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    body.light-mode .item h3 {
+      color: #262626;
+    }
+    
+    .item p {
+      font-weight: bold;
+      background: linear-gradient(45deg, #e1306c, #fd1d1d);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin: 15px 0;
+      font-size: 1.3rem;
+    }
+    
+    .item button {
+      background: linear-gradient(45deg, #405de6, #833ab4);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600;
+      width: 100%;
+      font-size: 1rem;
+    }
+    
+    .item button:hover {
+      background: linear-gradient(45deg, #833ab4, #405de6);
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(64, 93, 230, 0.4);
+    }
+    
+    .cart, #bill { 
+      margin-top: 50px; 
+      padding: 30px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      border: 1px solid #e0e0e0;
+    }
+    
+    body.light-mode .cart,
+    body.light-mode #bill {
+      background: white;
+      border-color: #e0e0e0;
+    }
+    
+    body:not(.light-mode) .cart,
+    body:not(.light-mode) #bill {
+      background: #1e1e1e;
+      border-color: #333;
+    }
+    
+    .cart h2, #bill h2 {
+      background: linear-gradient(45deg, #405de6, #833ab4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+      border-bottom: 3px solid #833ab4;
+      padding-bottom: 10px;
+      display: inline-block;
+    }
+    
+    #cart-items {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+    
+    #cart-items li {
+      padding: 15px;
+      background: #f8f9fa;
+      margin-bottom: 10px;
+      border-radius: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #e0e0e0;
+      transition: all 0.3s;
+    }
+    
+    body:not(.light-mode) #cart-items li {
+      background: #2d2d2d;
+      border-color: #444;
+      color: #e0e0e0;
+    }
+    
+    #cart-items li:hover {
+      transform: translateX(5px);
+      border-color: #e1306c;
+    }
+    
+    #cart-total {
+      font-size: 1.4rem;
+      background: linear-gradient(45deg, #e1306c, #fd1d1d);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: bold;
+    }
+    
+    #tableNo {
+      padding: 12px 20px;
+      border: 2px solid #405de6;
+      border-radius: 25px;
+      margin: 0 10px;
+      font-size: 1rem;
+      width: 150px;
+      transition: all 0.3s;
+      background: white;
+      color: #262626;
+    }
+    
+    body:not(.light-mode) #tableNo {
+      background: #2d2d2d;
+      color: white;
+    }
+    
+    #tableNo:focus {
+      outline: none;
+      border-color: #e1306c;
+      box-shadow: 0 0 0 3px rgba(225, 48, 108, 0.2);
+    }
+    
+    .payment-mode-section {
+      margin: 25px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 15px;
+      border: 1px solid #e0e0e0;
+    }
+    
+    body:not(.light-mode) .payment-mode-section {
+      background: #2d2d2d;
+      border-color: #444;
+    }
+    
+    .payment-mode-options {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .payment-option {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      flex: 1;
+      min-width: 120px;
+      color: #262626;
+    }
+    
+    body:not(.light-mode) .payment-option {
+      background: #1e1e1e;
+      border-color: #444;
+      color: #e0e0e0;
+    }
+    
+    .payment-option:hover {
+      border-color: #405de6;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(64, 93, 230, 0.2);
+    }
+    
+    .payment-option.selected {
+      background: linear-gradient(135deg, #e3f2fd, #f0f2ff);
+      border-color: #405de6;
+      box-shadow: 0 5px 15px rgba(64, 93, 230, 0.2);
+    }
+    
+    body:not(.light-mode) .payment-option.selected {
+      background: linear-gradient(135deg, #2d2d2d, #252525);
+      border-color: #e1306c;
+    }
+    
+    .payment-option input[type="radio"] {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+      accent-color: #405de6;
+    }
+    
+    .payment-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      animation: fadeIn 0.3s;
+    }
+    
+    .payment-popup-content {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 450px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s;
+      color: #262626;
+    }
+    
+    body:not(.light-mode) .payment-popup-content {
+      background: #1e1e1e;
+      color: #e0e0e0;
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .qr-container {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .qr-code {
+      width: 200px;
+      height: 200px;
+      margin: 20px auto;
+      background: linear-gradient(45deg, #405de6, #e1306c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 15px;
+      font-size: 3rem;
+    }
+    
+    .upi-id {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin: 15px 0;
+      padding: 10px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: #262626;
+    }
+    
+    body:not(.light-mode) .upi-id {
+      background: #2d2d2d;
+      color: #e0e0e0;
+    }
+    
+    .upi-id:hover {
+      background: #e0e0e0;
+      transform: scale(1.02);
+    }
+    
+    .card-form input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s;
+      background: white;
+      color: #262626;
+    }
+    
+    body:not(.light-mode) .card-form input {
+      background: #2d2d2d;
+      border-color: #444;
+      color: #e0e0e0;
+    }
+    
+    .card-form input:focus {
+      outline: none;
+      border-color: #405de6;
+    }
+    
+    .payment-btn {
+      background: linear-gradient(45deg, #4CAF50, #2E7D32);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      width: 100%;
+      margin-top: 20px;
+      transition: all 0.3s;
+    }
+    
+    .payment-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    }
+    
+    .close-payment {
+      float: right;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #999;
+      transition: all 0.3s;
+    }
+    
+    .close-payment:hover {
+      color: #333;
+      transform: rotate(90deg);
+    }
+    
+    #checkoutBtn {
+      background: linear-gradient(45deg, #4CAF50, #2E7D32);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 600;
+      transition: all 0.3s;
+      margin-top: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    #checkoutBtn:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+    }
+    
+    #checkoutBtn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    #bill {
+      background: white;
+      border: 2px solid #e1306c;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    body:not(.light-mode) #bill {
+      background: #1e1e1e;
+      border-color: #e1306c;
+    }
+    
+    #bill p {
+      margin-bottom: 12px;
+      font-size: 1rem;
+      color: #2d3748;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    body:not(.light-mode) #bill p {
+      color: #e0e0e0;
+    }
+    
+    #bill-items {
+      list-style: none;
+      margin: 20px 0;
+    }
+    
+    #bill-items li {
+      padding: 12px 0;
+      border-bottom: 1px dashed #ddd;
+      display: flex;
+      justify-content: space-between;
+      color: #4a5568;
+    }
+    
+    body:not(.light-mode) #bill-items li {
+      border-bottom-color: #444;
+      color: #e0e0e0;
+    }
+    
+    .bill-payment-display {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+    }
+    
+    .payment-cash {
+      background: rgba(76, 175, 80, 0.2);
+      color: #2e7d32;
+    }
+    
+    body:not(.light-mode) .payment-cash {
+      color: #81c784;
+    }
+    
+    .payment-upi {
+      background: rgba(33, 150, 243, 0.2);
+      color: #1976d2;
+    }
+    
+    body:not(.light-mode) .payment-upi {
+      color: #90caf9;
+    }
+    
+    .payment-card {
+      background: rgba(255, 152, 0, 0.2);
+      color: #f57c00;
+    }
+    
+    body:not(.light-mode) .payment-card {
+      color: #ffb74d;
+    }
+    
+    .order-confirmation-popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(45deg, #4CAF50, #2E7D32);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      z-index: 2000;
+      animation: slideIn 0.3s ease, slideOut 0.3s ease 2.7s;
+      max-width: 280px;
+      display: none;
+    }
+    
+    .feedback-section {
+      margin-top: 40px;
+      padding: 25px;
+      background: linear-gradient(135deg, #fff9f9 0%, #fff5f5 100%);
+      border-radius: 20px;
+      border: 2px solid #e1306c;
+      box-shadow: 0 5px 20px rgba(225, 48, 108, 0.2);
+    }
+    
+    body:not(.light-mode) .feedback-section {
+      background: linear-gradient(135deg, #2d2d2d 0%, #252525 100%);
+    }
+    
+    .star {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+    
+    .star:hover {
+      transform: scale(1.2);
+    }
+    
+    #chatbot {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 320px;
+      height: 420px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 3000;
+    }
+    
+    body:not(.light-mode) #chatbot {
+      background: #1e1e1e;
+    }
+    
+    #chatbot-header {
+      background: linear-gradient(45deg, #405de6, #833ab4);
+      color: white;
+      padding: 12px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    #chatbot-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background: #f5f7ff;
+    }
+    
+    body:not(.light-mode) #chatbot-messages {
+      background: #2d2d2d;
+    }
+    
+    .message {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 15px;
+      max-width: 80%;
+      font-size: 0.9rem;
+    }
+    
+    .user {
+      background: linear-gradient(45deg, #405de6, #833ab4);
+      color: white;
+      align-self: flex-end;
+      margin-left: auto;
+    }
+    
+    .bot {
+      background: #e0e0ff;
+      color: #333;
+      align-self: flex-start;
+    }
+    
+    body:not(.light-mode) .bot {
+      background: #3d3d3d;
+      color: #e0e0e0;
+    }
+    
+    #chatbot-input-area {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #e0e0e0;
+    }
+    
+    body:not(.light-mode) #chatbot-input-area {
+      border-top-color: #444;
+    }
+    
+    #chatbot-input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      outline: none;
+      background: white;
+      color: #262626;
+    }
+    
+    body:not(.light-mode) #chatbot-input {
+      background: #2d2d2d;
+      border-color: #444;
+      color: #e0e0e0;
+    }
+    
+    #chatbot-input-area button {
+      margin-left: 8px;
+      border: none;
+      background: linear-gradient(45deg, #405de6, #833ab4);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    
+    #chatbot-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(45deg, #405de6, #833ab4);
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      z-index: 3000;
+    }
+    
+    @media (max-width: 768px) {
+      nav {
+        position: fixed;
+        top: 0;
+        right: -250px;
+        width: 250px;
+        height: 100vh;
+        background: linear-gradient(45deg, #405de6, #833ab4);
+        flex-direction: column;
+        padding: 2rem;
+        transition: right 0.3s ease;
+        z-index: 100;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+      }
+      
+      nav.active {
+        right: 0;
+      }
+      
+      .menu-toggle {
+        display: flex;
+        z-index: 101;
+      }
+      
+      .menu-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      
+      .menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+      }
+      
+      .menu-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -6px);
+      }
+      
+      .menu {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .payment-mode-options {
+        flex-direction: column;
+      }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+    
+    .bill-receipt-container {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+    
+    body:not(.light-mode) .bill-receipt-container {
+      background: #2d2d2d;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <h1 onclick="window.location.href='index.html'">🍴 SmartBite Restaurant</h1>
+      <button class="menu-toggle" id="menuToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <nav id="mainNav">
+      <a href="index.html"> Home</a>
+      <a href="order-history.html"> My Orders</a>
+  
+    </nav>
+
+    <div class="header-right" id="userInfoSection">
+      <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Light Mode">
+        <span id="darkModeIcon">☀️</span>
+        <span id="darkModeText">Light</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&w=1000&q=80" alt="Restaurant" class="hero-image">
+    <div class="hero-content">
+      <h2>Our Delicious Menu</h2>
+      <p>Choose your favorite dishes</p>
+    </div>
+  </section>
+
+  <main>
+    <!-- Starters -->
+    <div class="menu-section">
+      <h2>🥗 Starters</h2>
+      <div class="menu">
+        <div class="item">
+          <img src="Tomato Soup.jpg" alt="Tomato Soup">
+          <h3>Tomato Soup</h3>
+          <p>₹120</p>
+          <button onclick="addToCart('Tomato Soup', 120)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Caesar Salad.jpg" alt="Caesar Salad">
+          <h3>Caesar Salad</h3>
+          <p>₹180</p>
+          <button onclick="addToCart('Caesar Salad', 180)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="spiring rolls.jpg" alt="Spring Rolls">
+          <h3>Spring Rolls</h3>
+          <p>₹150</p>
+          <button onclick="addToCart('Spring Rolls', 150)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="garic.jpg" alt="Garlic Bread">
+          <h3>Garlic Bread</h3>
+          <p>₹130</p>
+          <button onclick="addToCart('Garlic Bread', 130)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="panner butter masala.jpg" alt="Paneer Tikka">
+          <h3>Paneer Tikka</h3>
+          <p>₹200</p>
+          <button onclick="addToCart('Paneer Tikka', 200)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Course -->
+    <div class="menu-section">
+      <h2>🍛 Main Course</h2>
+      <div class="menu">
+        <div class="item">
+          <img src="grilled-seafood.png" alt="Grilled Seafood">
+          <h3>Grilled Seafood</h3>
+          <p>₹450</p>
+          <button onclick="addToCart('Grilled Seafood', 450)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="briyani.jpg" alt="Chicken Biryani">
+          <h3>Chicken Biryani</h3>
+          <p>₹280</p>
+          <button onclick="addToCart('Chicken Biryani', 280)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="panner butter masala.jpg" alt="Paneer Butter Masala">
+          <h3>Paneer Butter Masala</h3>
+          <p>₹250</p>
+          <button onclick="addToCart('Paneer Butter Masala', 250)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Butter Chicken.jpg" alt="Butter Chicken">
+          <h3>Butter Chicken</h3>
+          <p>₹320</p>
+          <button onclick="addToCart('Butter Chicken', 320)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Veg Fried Rice.jpg" alt="Veg Fried Rice">
+          <h3>Veg Fried Rice</h3>
+          <p>₹220</p>
+          <button onclick="addToCart('Veg Fried Rice', 220)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Beverages -->
+    <div class="menu-section">
+      <h2>☕ Beverages</h2>
+      <div class="menu">
+        <div class="item">
+          <img src="Coffee Bourbon.jpg" alt="Coffee Bourbon">
+          <h3>Coffee Bourbon</h3>
+          <p>₹120</p>
+          <button onclick="addToCart('Coffee Bourbon', 120)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Masala Tea.jpg" alt="Masala Tea">
+          <h3>Masala Tea</h3>
+          <p>₹50</p>
+          <button onclick="addToCart('Masala Tea', 50)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Fresh Orange Juice.jpg" alt="Fresh Orange Juice">
+          <h3>Fresh Orange Juice</h3>
+          <p>₹100</p>
+          <button onclick="addToCart('Fresh Orange Juice', 100)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Cold Coffee.jpg" alt="Cold Coffee">
+          <h3>Cold Coffee</h3>
+          <p>₹150</p>
+          <button onclick="addToCart('Cold Coffee', 150)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Lemon Soda.jpg" alt="Lemon Soda">
+          <h3>Lemon Soda</h3>
+          <p>₹80</p>
+          <button onclick="addToCart('Lemon Soda', 80)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desserts -->
+    <div class="menu-section">
+      <h2>🍨 Desserts</h2>
+      <div class="menu">
+        <div class="item">
+          <img src="Chocolate Ice Cream.jpg" alt="Chocolate Ice Cream">
+          <h3>Chocolate Ice Cream</h3>
+          <p>₹150</p>
+          <button onclick="addToCart('Chocolate Ice Cream', 150)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Cheesecake.jpg" alt="Cheesecake">
+          <h3>Cheesecake</h3>
+          <p>₹220</p>
+          <button onclick="addToCart('Cheesecake', 220)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Gulab Jamun.jpg" alt="Gulab Jamun">
+          <h3>Gulab Jamun</h3>
+          <p>₹100</p>
+          <button onclick="addToCart('Gulab Jamun', 100)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Brownie with Ice Cream.jpg" alt="Brownie Ice Cream">
+          <h3>Brownie with Ice Cream</h3>
+          <p>₹180</p>
+          <button onclick="addToCart('Brownie with Ice Cream', 180)">Add to Cart</button>
+        </div>
+        <div class="item">
+          <img src="Rasgulla.jpg" alt="Rasgulla">
+          <h3>Rasgulla</h3>
+          <p>₹90</p>
+          <button onclick="addToCart('Rasgulla', 90)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Cart Section -->
+    <section class="cart">
+      <h2>🛒 Your Cart</h2>
+      <ul id="cart-items"></ul>
+      <p><strong>Total:</strong> ₹<span id="cart-total">0</span></p>
+      
+      <div style="margin-top: 20px;">
+        <label for="tableNo">Table No:</label>
+        <input type="text" id="tableNo" placeholder="Enter table number">
+      </div>
+      
+      <div class="payment-mode-section">
+        <label><strong>Payment Mode:</strong></label>
+        <div class="payment-mode-options">
+          <label class="payment-option">
+            <input type="radio" name="paymentMode" value="Cash" checked>
+            <span class="payment-icon">💵</span>
+            <span>Cash</span>
+          </label>
+          
+          <label class="payment-option">
+            <input type="radio" name="paymentMode" value="UPI">
+            <span class="payment-icon">📱</span>
+            <span>UPI</span>
+          </label>
+          
+          <label class="payment-option">
+            <input type="radio" name="paymentMode" value="Card">
+            <span class="payment-icon">💳</span>
+            <span>Card</span>
+          </label>
+        </div>
+      </div>
+      
+      <button id="checkoutBtn" onclick="processCheckout()">
+        <span>💳</span> Proceed to Checkout
+      </button>
+    </section>
+
+    <!-- Bill Section -->
+    <section id="bill" style="display:none;">
+      <h2>🧾 Bill Receipt</h2>
+      
+      <div class="bill-receipt-container">
+        <p><strong>Customer Name:</strong> <span id="billUser"></span></p>
+        <p><strong>Table No:</strong> <span id="billTable"></span></p>
+        <p><strong>Bill No:</strong> <span id="billNo"></span></p>
+        <p><strong>Date:</strong> <span id="billDate"></span></p>
+        <p>
+          <strong>Payment Mode:</strong> 
+          <span id="billPayment" class="bill-payment-display payment-cash">💵 Cash</span>
+        </p>
+      </div>
+      
+      <h3 style="color: #405de6; margin-bottom: 15px;">Order Items:</h3>
+      <ul id="bill-items"></ul>
+      
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e1306c;">
+        <p style="font-size: 1.3rem; font-weight: bold;">
+          <strong>Total Amount:</strong> ₹<span id="bill-total"></span>
+        </p>
+      </div>
+      
+      <div class="feedback-section">
+        <h3 style="color: #e1306c; margin-bottom: 20px;">⭐ Share Your Feedback</h3>
+        
+        <div class="star-rating" style="margin-bottom: 20px;">
+          <p style="margin-bottom: 10px;">Rate your experience:</p>
+          <div class="stars" id="stars-container" style="display: flex; gap: 10px;">
+            <span class="star" data-rating="1" style="font-size: 2rem; cursor: pointer;">☆</span>
+            <span class="star" data-rating="2" style="font-size: 2rem; cursor: pointer;">☆</span>
+            <span class="star" data-rating="3" style="font-size: 2rem; cursor: pointer;">☆</span>
+            <span class="star" data-rating="4" style="font-size: 2rem; cursor: pointer;">☆</span>
+            <span class="star" data-rating="5" style="font-size: 2rem; cursor: pointer;">☆</span>
+          </div>
+          <p id="rating-text" style="color: #e1306c; min-height: 24px; margin-top: 10px;"></p>
+        </div>
+        
+        <div class="feedback-form">
+          <div style="margin-bottom: 20px;">
+            <label for="feedback-text">Your Comments (Optional):</label>
+            <textarea 
+              id="feedback-text" 
+              placeholder="Tell us about your experience..."
+              style="width: 100%; height: 100px; padding: 15px; border-radius: 15px;"></textarea>
+            <div style="display: flex; justify-content: flex-end; margin-top: 5px;">
+              <small id="char-count">0/500</small>
+            </div>
+          </div>
+          
+          <button id="submit-feedback" onclick="submitFeedback()" style="background: linear-gradient(45deg, #4CAF50, #2E7D32); color: white; padding: 15px 30px; border-radius: 25px; width: 100%;">
+            ✅ Submit Feedback
+          </button>
+          
+          <div id="feedback-success" style="display: none; margin-top: 15px; padding: 15px; background: rgba(76, 175, 80, 0.2); border-radius: 15px; text-align: center;">
+            ✅ Thank you for your feedback!
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin-top: 30px; text-align: center;">
+        <button onclick="printBill()" style="background: linear-gradient(45deg, #405de6, #833ab4); padding: 12px 30px; border-radius: 25px; margin-right: 10px; color: white; border: none; cursor: pointer;">🖨️ Print Bill</button>
+        <button onclick="newOrder()" style="background: linear-gradient(45deg, #4CAF50, #2E7D32); padding: 12px 30px; border-radius: 25px; color: white; border: none; cursor: pointer;">🍽️ New Order</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="orderConfirmation" class="order-confirmation-popup">
+    <div>✅ <span>Order Updated</span></div>
+    <div id="confirmationText"></div>
+  </div>
+  
+  <div id="chatbot">
+    <div id="chatbot-header">
+      🤖 SmartBite Assistant
+      <span id="chatbot-close">✖</span>
+    </div>
+    <div id="chatbot-messages"></div>
+    <div id="chatbot-input-area">
+      <input type="text" id="chatbot-input" placeholder="Ask me anything..." />
+      <button id="micBtn" title="Voice input">🎤</button>
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+  <button id="chatbot-toggle">💬</button>
+
+  <script>
+    // Login Check
+    const userLoggedIn = localStorage.getItem("userLoggedIn") === "true";
+    const ownerLoggedIn = localStorage.getItem("ownerLoggedIn") === "true";
+
+    if (!userLoggedIn && !ownerLoggedIn) {
+      if (!window.location.href.includes('login.html')) {
+        window.location.href = "login.html";
+      }
+    }
+
+    // Dark Mode Toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const darkModeIcon = document.getElementById('darkModeIcon');
+    const darkModeText = document.getElementById('darkModeText');
+    const isLightMode = localStorage.getItem('lightMode') === 'true';
+
+    if (isLightMode) {
+      document.body.classList.add('light-mode');
+      darkModeIcon.textContent = '🌙';
+      darkModeText.textContent = 'Dark';
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+      
+      if (document.body.classList.contains('light-mode')) {
+        darkModeIcon.textContent = '🌙';
+        darkModeText.textContent = 'Dark';
+        localStorage.setItem('lightMode', 'true');
+      } else {
+        darkModeIcon.textContent = '☀️';
+        darkModeText.textContent = 'Light';
+        localStorage.setItem('lightMode', 'false');
+      }
+    });
+
+    let selectedPaymentMode = 'Cash';
+    let currentBillNo = '';
+    let currentTableNo = '';
+    let cart = [];
+    let total = 0;
+    let selectedRating = 0;
+
+    function displayUserInfo() {
+      const userName = localStorage.getItem("userName") || "Guest";
+      const userInfoSection = document.getElementById('userInfoSection');
+      
+      if (userInfoSection) {
+        const existingDarkMode = userInfoSection.querySelector('#darkModeToggle');
+        if (existingDarkMode) {
+          userInfoSection.innerHTML = `
+            <div class="user-welcome">
+              Welcome, <strong>${userName}</strong>
+            </div>
+            <button class="logout-btn" onclick="userLogout()">Logout</button>
+          `;
+          userInfoSection.prepend(existingDarkMode);
+        } else {
+          userInfoSection.innerHTML = `
+            <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Light Mode">
+              <span id="darkModeIcon">${isLightMode ? '🌙' : '☀️'}</span>
+              <span id="darkModeText">${isLightMode ? 'Dark' : 'Light'}</span>
+            </button>
+            <div class="user-welcome">
+              Welcome, <strong>${userName}</strong>
+            </div>
+            <button class="logout-btn" onclick="userLogout()">Logout</button>
+          `;
+        }
+      }
+    }
+
+    function userLogout() {
+      localStorage.removeItem("userLoggedIn");
+      localStorage.removeItem("userName");
+      window.location.href = "login.html";
+    }
+
+    const menuToggle = document.getElementById('menuToggle');
+    const mainNav = document.getElementById('mainNav');
+    
+    if (menuToggle) {
+      menuToggle.addEventListener('click', () => {
+        mainNav.classList.toggle('active');
+        menuToggle.classList.toggle('active');
+      });
+    }
+    
+    function addToCart(name, price) {
+      const existingItem = cart.find(item => item.name === name);
+      
+      if (existingItem) {
+        existingItem.quantity++;
+        existingItem.totalPrice = existingItem.price * existingItem.quantity;
+        total += price;
+      } else {
+        cart.push({ 
+          name: name, 
+          price: price,
+          quantity: 1,
+          totalPrice: price
+        });
+        total += price;
+      }
+      
+      updateCart();
+      showOrderConfirmation(name, price);
+    }
+    
+    function changeQuantity(index, change) {
+      const item = cart[index];
+      const newQuantity = item.quantity + change;
+      
+      if (newQuantity < 1) {
+        removeFromCart(index);
+        return;
+      }
+      
+      item.quantity = newQuantity;
+      const oldTotalPrice = item.totalPrice;
+      item.totalPrice = item.price * newQuantity;
+      total = total - oldTotalPrice + item.totalPrice;
+      
+      updateCart();
+      showOrderConfirmation(`${item.name} quantity: ${newQuantity}`, item.totalPrice);
+    }
+    
+    function removeFromCart(index) {
+      const item = cart[index];
+      total -= item.totalPrice;
+      cart.splice(index, 1);
+      updateCart();
+      showOrderConfirmation(`${item.name} removed`, item.totalPrice);
+    }
+    
+    function updateCart() {
+      const cartItems = document.getElementById('cart-items');
+      const cartTotal = document.getElementById('cart-total');
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      
+      cartItems.innerHTML = '';
+      cart.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div style="flex: 1;">
+            <strong>${item.name}</strong><br>
+            <small>₹${item.price} × ${item.quantity} = ₹${item.totalPrice}</small>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button onclick="changeQuantity(${index}, -1)" style="padding: 5px 10px; background: #405de6; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">
+              -
+            </button>
+            <span style="min-width: 30px; text-align: center;">${item.quantity}</span>
+            <button onclick="changeQuantity(${index}, 1)" style="padding: 5px 10px; background: #405de6; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">
+              +
+            </button>
+            <button onclick="removeFromCart(${index})" style="padding: 5px 10px; background: #ff4444; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.8rem; margin-left: 10px;">
+              Remove
+            </button>
+          </div>
+        `;
+        cartItems.appendChild(li);
+      });
+      
+      cartTotal.textContent = total;
+      
+      if (cart.length === 0) {
+        checkoutBtn.disabled = true;
+        checkoutBtn.innerHTML = '<span>🛒</span> Cart is Empty';
+      } else {
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = '<span>💳</span> Proceed to Checkout';
+      }
+    }
+    
+    function showOrderConfirmation(itemName, price) {
+      const popup = document.getElementById('orderConfirmation');
+      const text = document.getElementById('confirmationText');
+      
+      text.textContent = `${itemName} - ₹${price}`;
+      popup.style.display = 'block';
+      
+      setTimeout(() => {
+        popup.style.display = 'none';
+      }, 3000);
+    }
+    
+    function showUPIPopup() {
+      const popup = document.createElement('div');
+      popup.className = 'payment-popup';
+      popup.innerHTML = `
+        <div class="payment-popup-content ${document.body.classList.contains('light-mode') ? 'light' : ''}">
+          <span class="close-payment" onclick="this.parentElement.parentElement.remove()">&times;</span>
+          <h3 style="margin-bottom: 20px;">📱 UPI Payment</h3>
+          <div class="qr-container">
+            <div class="qr-code">📱</div>
+            <p style="margin: 10px 0;">Scan QR code with any UPI app</p>
+            <div class="upi-id" onclick="copyUPIID()">smartbite@okhdfcbank</div>
+            <small style="color: #888;">Click to copy UPI ID</small>
+          </div>
+          <button class="payment-btn" onclick="completePayment(this)">✅ Payment Completed</button>
+        </div>
+      `;
+      document.body.appendChild(popup);
+    }
+    
+    function showCardPopup() {
+      const popup = document.createElement('div');
+      popup.className = 'payment-popup';
+      popup.innerHTML = `
+        <div class="payment-popup-content ${document.body.classList.contains('light-mode') ? 'light' : ''}">
+          <span class="close-payment" onclick="this.parentElement.parentElement.remove()">&times;</span>
+          <h3 style="margin-bottom: 20px;">💳 Card Payment</h3>
+          <div class="card-form">
+            <input type="text" id="cardNumber" placeholder="Card Number" maxlength="16">
+            <input type="text" id="cardName" placeholder="Card Holder Name">
+            <div style="display: flex; gap: 10px;">
+              <input type="text" id="expiryDate" placeholder="MM/YY" style="flex: 1;">
+              <input type="text" id="cvv" placeholder="CVV" style="flex: 1;" maxlength="3">
+            </div>
+          </div>
+          <button class="payment-btn" onclick="validateCardPayment(this)">💳 Pay Now</button>
+        </div>
+      `;
+      document.body.appendChild(popup);
+    }
+    
+    function copyUPIID() {
+      const upiId = 'smartbite@okhdfcbank';
+      navigator.clipboard.writeText(upiId);
+      showOrderConfirmation('UPI ID copied!', 0);
+    }
+    
+    function validateCardPayment(btn) {
+      const popup = btn.parentElement.parentElement;
+      const cardNumber = document.getElementById('cardNumber')?.value;
+      const cardName = document.getElementById('cardName')?.value;
+      const expiryDate = document.getElementById('expiryDate')?.value;
+      const cvv = document.getElementById('cvv')?.value;
+      
+      if (!cardNumber || cardNumber.length < 16) {
+        alert('Please enter a valid 16-digit card number');
+        return;
+      }
+      if (!cardName) {
+        alert('Please enter card holder name');
+        return;
+      }
+      if (!expiryDate || !expiryDate.match(/^\d{2}\/\d{2}$/)) {
+        alert('Please enter valid expiry date (MM/YY)');
+        return;
+      }
+      if (!cvv || cvv.length < 3) {
+        alert('Please enter valid CVV');
+        return;
+      }
+      completePayment(btn);
+    }
+    
+    function completePayment(btn) {
+      const popup = btn.parentElement.parentElement;
+      popup.remove();
+      generateBillAfterPayment();
+    }
+    
+    async function processCheckout() {
+      const tableNo = document.getElementById('tableNo').value;
+      if (!tableNo) {
+        alert('Please enter a table number');
+        return;
+      }
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+      
+      const selectedRadio = document.querySelector('input[name="paymentMode"]:checked');
+      if (selectedRadio) selectedPaymentMode = selectedRadio.value;
+      
+      currentTableNo = tableNo;
+      
+      if (selectedPaymentMode === 'UPI') {
+        showUPIPopup();
+      } else if (selectedPaymentMode === 'Card') {
+        showCardPopup();
+      } else {
+        await saveOrderAndGenerateBill();
+      }
+    }
+    
+    async function saveOrderAndGenerateBill() {
+      const cartItemsForBill = JSON.parse(JSON.stringify(cart));
+      const totalForBill = total;
+      
+      try {
+        const response = await fetch('http://localhost:5500/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userName: localStorage.getItem("userName") || "Guest",
+            tableNo: currentTableNo,
+            items: cartItemsForBill,
+            total: totalForBill,
+            paymentMode: selectedPaymentMode
+          })
+        });
+        const result = await response.json();
+        if (response.ok) {
+          currentBillNo = result.order.billNo;
+          generateBill(currentTableNo, result.order.billNo, cartItemsForBill, totalForBill, true);
+        } else {
+          alert('Error saving order: ' + result.error);
+        }
+      } catch (error) {
+        console.log("Server not available, using localStorage fallback");
+        currentBillNo = 'SB' + Date.now();
+        generateBill(currentTableNo, currentBillNo, cartItemsForBill, totalForBill, false);
+      }
+    }
+    
+    function generateBillAfterPayment() {
+      saveOrderAndGenerateBill();
+    }
+    
+    function generateBill(tableNo, billNo, cartItemsForBill, totalForBill, isServerSaved) {
+      document.getElementById('billTable').textContent = tableNo;
+      document.getElementById('billUser').textContent = localStorage.getItem("userName") || "Guest";
+      document.getElementById('billNo').textContent = billNo;
+      document.getElementById('billDate').textContent = new Date().toLocaleString();
+      document.getElementById('bill-total').textContent = totalForBill;
+      
+      const billPaymentElement = document.getElementById('billPayment');
+      let paymentIcon = '', paymentClass = '';
+      switch(selectedPaymentMode) {
+        case 'Cash': paymentIcon = '💵'; paymentClass = 'payment-cash'; break;
+        case 'UPI': paymentIcon = '📱'; paymentClass = 'payment-upi'; break;
+        case 'Card': paymentIcon = '💳'; paymentClass = 'payment-card'; break;
+      }
+      billPaymentElement.className = `bill-payment-display ${paymentClass}`;
+      billPaymentElement.innerHTML = `${paymentIcon} ${selectedPaymentMode}`;
+      
+      const billItems = document.getElementById('bill-items');
+      billItems.innerHTML = '';
+      cartItemsForBill.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${item.name}</span><span>${item.quantity} × ₹${item.price} = ₹${item.totalPrice}</span>`;
+        billItems.appendChild(li);
+      });
+      
+      let orders = JSON.parse(localStorage.getItem('orders')) || [];
+      orders.push({
+        userName: localStorage.getItem("userName") || "Guest",
+        tableNo: tableNo,
+        billNo: billNo,
+        date: new Date().toLocaleString(),
+        items: cartItemsForBill,
+        total: totalForBill,
+        paymentMode: selectedPaymentMode,
+        status: 'completed'
+      });
+      localStorage.setItem('orders', JSON.stringify(orders));
+      
+      document.getElementById('bill').style.display = 'block';
+      document.getElementById('bill').scrollIntoView({ behavior: 'smooth' });
+      
+      initializeFeedback();
+      showOrderConfirmation(`Order placed successfully! Table: ${tableNo}`, totalForBill);
+      
+      cart = [];
+      total = 0;
+      updateCart();
+      document.getElementById('tableNo').value = '';
+    }
+    
+    function printBill() {
+      window.print();
+    }
+    
+    function newOrder() {
+      document.getElementById('bill').style.display = 'none';
+      document.querySelector('.cart').scrollIntoView({ behavior: 'smooth' });
+      document.querySelector('input[name="paymentMode"][value="Cash"]').checked = true;
+      selectPaymentMode('Cash');
+    }
+    
+    function selectPaymentMode(mode) {
+      selectedPaymentMode = mode;
+      document.querySelectorAll('input[name="paymentMode"]').forEach(radio => radio.checked = radio.value === mode);
+      document.querySelectorAll('.payment-option').forEach(option => option.classList.remove('selected'));
+      const selectedOption = document.querySelector(`.payment-option input[value="${mode}"]`);
+      if (selectedOption) selectedOption.parentElement.classList.add('selected');
+    }
+    
+    function initializeFeedback() {
+      selectedRating = 0;
+      const stars = document.querySelectorAll('.star');
+      stars.forEach(star => {
+        star.textContent = '☆';
+        star.style.color = '#ddd';
+      });
+      document.getElementById('feedback-text').value = '';
+      document.getElementById('char-count').textContent = '0/500';
+      document.getElementById('rating-text').textContent = '';
+      document.getElementById('feedback-success').style.display = 'none';
+      
+      addStarEventListeners();
+      document.getElementById('feedback-text').addEventListener('input', handleTextareaInput);
+    }
+    
+    function addStarEventListeners() {
+      const stars = document.querySelectorAll('.star');
+      stars.forEach(star => {
+        star.replaceWith(star.cloneNode(true));
+      });
+      const freshStars = document.querySelectorAll('.star');
+      freshStars.forEach(star => {
+        star.addEventListener('click', function() {
+          selectedRating = parseInt(this.dataset.rating);
+          updateStars(selectedRating);
+          updateRatingText(selectedRating);
+        });
+        star.addEventListener('mouseover', function() {
+          updateStars(parseInt(this.dataset.rating), true);
+        });
+        star.addEventListener('mouseout', function() {
+          updateStars(selectedRating);
+        });
+      });
+    }
+    
+    function handleTextareaInput() {
+      const charCount = this.value.length;
+      const charCountElement = document.getElementById('char-count');
+      charCountElement.textContent = `${charCount}/500`;
+      if (charCount > 500) {
+        this.value = this.value.substring(0, 500);
+        charCountElement.textContent = '500/500';
+        charCountElement.style.color = '#ff4444';
+      } else {
+        charCountElement.style.color = '#888';
+      }
+    }
+    
+    function updateStars(rating, isHover = false) {
+      const stars = document.querySelectorAll('.star');
+      stars.forEach(star => {
+        const starRating = parseInt(star.dataset.rating);
+        if (starRating <= rating) {
+          star.textContent = '★';
+          star.style.color = '#ffd700';
+        } else {
+          star.textContent = '☆';
+          star.style.color = '#ddd';
+        }
+      });
+    }
+    
+    function updateRatingText(rating) {
+      const ratingText = document.getElementById('rating-text');
+      const descriptions = {
+        1: 'Poor - We\'re sorry to hear that',
+        2: 'Fair - We\'ll try to do better',
+        3: 'Good - Thank you!',
+        4: 'Very Good - We\'re glad you enjoyed!',
+        5: 'Excellent - Thank you for the perfect rating!'
+      };
+      ratingText.textContent = descriptions[rating] || '';
+    }
+    
+    async function submitFeedback() {
+      const feedbackText = document.getElementById('feedback-text').value.trim();
+      const submitBtn = document.getElementById('submit-feedback');
+      
+      if (selectedRating === 0) {
+        alert('⭐ Please select a rating by clicking on the stars');
+        return;
+      }
+      
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>⏳</span> Submitting...';
+      
+      const feedbackData = {
+        userName: localStorage.getItem("userName") || "Guest",
+        tableNo: currentTableNo,
+        billNo: currentBillNo,
+        rating: selectedRating,
+        feedback: feedbackText || "No comment provided"
+      };
+      
+      try {
+        const response = await fetch('http://localhost:5500/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(feedbackData)
+        });
+        const result = await response.json();
+        if (result.success) {
+          saveFeedbackToLocalStorage({...feedbackData, id: result.feedbackId || 'FB' + Date.now(), date: new Date().toLocaleString()});
+          showFeedbackSuccess();
+        } else {
+          saveFeedbackToLocalStorage({...feedbackData, id: 'FB' + Date.now(), date: new Date().toLocaleString(), savedToDB: false});
+          showFeedbackSuccess("Feedback saved locally (server error)");
+        }
+      } catch (error) {
+        saveFeedbackToLocalStorage({...feedbackData, id: 'FB' + Date.now(), date: new Date().toLocaleString(), savedToDB: false});
+        showFeedbackSuccess("Feedback saved locally (server offline)");
+      }
+    }
+    
+    function saveFeedbackToLocalStorage(feedbackData) {
+      try {
+        let allFeedback = JSON.parse(localStorage.getItem('restaurantFeedback')) || [];
+        allFeedback.push(feedbackData);
+        localStorage.setItem('restaurantFeedback', JSON.stringify(allFeedback));
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+    
+    function showFeedbackSuccess(message = "Thank you for your valuable feedback!") {
+      const successDiv = document.getElementById('feedback-success');
+      successDiv.style.display = 'block';
+      successDiv.innerHTML = `✅ ${message}`;
+      const submitBtn = document.getElementById('submit-feedback');
+      submitBtn.innerHTML = '<span>✅</span> Feedback Submitted';
+      submitBtn.style.background = 'linear-gradient(45deg, #2E7D32, #1B5E20)';
+      showOrderConfirmation('Thank you for your feedback!', 0);
+    }
+    
+    // Chatbot Functions
+    const chatbot = document.getElementById("chatbot");
+    const toggleBtn = document.getElementById("chatbot-toggle");
+    const closeBtn = document.getElementById("chatbot-close");
+    const messagesDiv = document.getElementById("chatbot-messages");
+    
+    if (toggleBtn) toggleBtn.onclick = () => chatbot.style.display = "flex";
+    if (closeBtn) closeBtn.onclick = () => chatbot.style.display = "none";
+    
+    function addMessage(text, sender) {
+      const div = document.createElement("div");
+      div.className = `message ${sender}`;
+      div.textContent = text;
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+    
+    async function sendMessage() {
+      const input = document.getElementById("chatbot-input");
+      const message = input.value.trim();
+      if (!message) return;
+      addMessage(message, "user");
+      input.value = "";
+      addMessage("Thinking...", "bot");
+      try {
+        const response = await fetch("http://localhost:5500/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message })
+        });
+        const data = await response.json();
+        messagesDiv.lastChild.remove();
+        addMessage(data.reply, "bot");
+      } catch (error) {
+        messagesDiv.lastChild.remove();
+        addMessage("Sorry, I'm having trouble connecting. Please try again.", "bot");
+      }
+    }
+    
+    // Voice Recognition
+    let recognition;
+    let isListening = false;
+    const micBtn = document.getElementById("micBtn");
+    const inputBox = document.getElementById("chatbot-input");
+    
+    if ("webkitSpeechRecognition" in window) {
+      recognition = new webkitSpeechRecognition();
+      recognition.lang = "en-IN";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+    }
+    
+    if (micBtn) {
+      micBtn.onclick = () => {
+        if (!recognition) return;
+        if (!isListening) {
+          recognition.start();
+          isListening = true;
+          micBtn.classList.add("listening");
+        } else {
+          recognition.stop();
+          isListening = false;
+          micBtn.classList.remove("listening");
+        }
+      };
+    }
+    
+    if (recognition) {
+      recognition.onresult = (event) => {
+        const spokenText = event.results[0][0].transcript;
+        if (inputBox) inputBox.value = spokenText;
+      };
+      recognition.onend = () => {
+        isListening = false;
+        if (micBtn) micBtn.classList.remove("listening");
+      };
+    }
+    
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      displayUserInfo();
+      selectPaymentMode('Cash');
+      updateCart();
+      document.querySelectorAll('input[name="paymentMode"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+          if (this.checked) selectPaymentMode(this.value);
+        });
+      });
+      initializeFeedback();
+    });
+  </script>
+</body>
+</html>
