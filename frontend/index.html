@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SmartBite Restaurant</title>
   <style>
-    /* Instagram-inspired color variables */
+   
     :root {
       --insta-purple: #833ab4;
       --insta-pink: #e1306c;
@@ -238,6 +238,53 @@
       font-size: 1.1rem;
     }
     
+    /* Feature Detail Modal */
+    .feature-detail-modal {
+      max-width: 800px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .feature-detail-modal h2 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+    
+    .feature-detail-modal h3 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      color: #ffd6d6;
+    }
+    
+    .protein-list, .delivery-list, .dining-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    
+    .protein-item, .delivery-item, .dining-item {
+      background: rgba(255,255,255,0.1);
+      padding: 12px;
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .protein-item strong, .delivery-item strong, .dining-item strong {
+      color: #ffd6d6;
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .feature-image {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+    
     .virtual-tour {
       padding: 2rem;
       background: linear-gradient(135deg, rgba(30,30,30,0.9), rgba(30,30,30,0.95));
@@ -350,11 +397,13 @@
       min-width: 120px;
       border: 1px solid rgba(255,255,255,0.2);
       transition: all 0.3s;
+      cursor: pointer;
     }
     
     .feature:hover {
       transform: translateY(-5px);
       background: rgba(255, 255, 255, 0.25);
+      cursor: pointer;
     }
     
     .feature-icon {
@@ -769,6 +818,14 @@
     </div>
   </div>
 
+  <!-- Feature Detail Modal -->
+  <div class="modal" id="featureDetailModal">
+    <div class="modal-content feature-detail-modal" id="featureDetailContent">
+      <span class="close-modal" onclick="closeModal('featureDetailModal')">&times;</span>
+      <div id="featureDetailHtml"></div>
+    </div>
+  </div>
+
   <section class="hero">
     <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmVzdGF1cmFudHxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80" alt="Restaurant Interior" class="hero-image">
     <div class="hero-content">
@@ -778,19 +835,15 @@
         <i class="fas fa-utensils"></i> Visit Full Menu →
       </button>
       <div class="features">
-        <div class="feature">
+        <div class="feature" onclick="showFeatureDetail('fineDining')">
           <div class="feature-icon">🍽️</div>
           <div class="feature-text">Fine Dining</div>
         </div>
-        <div class="feature">
-          <div class="feature-icon">🚚</div>
-          <div class="feature-text">Fast Delivery</div>
-        </div>
-        <div class="feature">
+        <div class="feature" onclick="showFeatureDetail('freshIngredients')">
           <div class="feature-icon">🌱</div>
           <div class="feature-text">Fresh Ingredients</div>
         </div>
-        <div class="feature">
+        <div class="feature" onclick="showFeatureDetail('expertChefs')">
           <div class="feature-icon">👨‍🍳</div>
           <div class="feature-text">Expert Chefs</div>
         </div>
@@ -884,6 +937,114 @@
     };
 
     const allItems = [...fullMenuData.starters, ...fullMenuData.main, ...fullMenuData.beverages, ...fullMenuData.desserts];
+
+    // Feature Detail Function
+    function showFeatureDetail(feature) {
+      const featureContent = document.getElementById('featureDetailHtml');
+      
+      if (feature === 'freshIngredients') {
+        featureContent.innerHTML = `
+          <h2><i class="fas fa-leaf"></i> Fresh & Protein-Rich Ingredients</h2>
+          <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80" class="feature-image" alt="Fresh Ingredients">
+          <p>At SmartBite, we source only the freshest, high-protein ingredients for our dishes. Our commitment to quality ensures every meal is nutritious and delicious.</p>
+          
+          <h3>🥩 Premium Protein Sources We Use:</h3>
+          <div class="protein-list">
+            <div class="protein-item"><strong>🐔 Free-Range Chicken</strong> - Locally sourced, hormone-free</div>
+            <div class="protein-item"><strong>🐟 Fresh Seafood</strong> - Daily catch from sustainable fisheries</div>
+            <div class="protein-item"><strong>🥚 Organic Eggs</strong> - From free-range farms</div>
+            <div class="protein-item"><strong>🫘 Plant Proteins</strong> - Chickpeas, lentils, tofu, and quinoa</div>
+            <div class="protein-item"><strong>🐑 Lean Lamb</strong> - Grass-fed and tender</div>
+            <div class="protein-item"><strong>🐄 Grass-Fed Beef</strong> - Rich in omega-3 fatty acids</div>
+          </div>
+          
+          <h3>🌿 Protein-Rich Dishes on Our Menu:</h3>
+          <div class="protein-list">
+            <div class="protein-item"><strong>Grilled Seafood</strong> - 35g protein per serving</div>
+            <div class="protein-item"><strong>Butter Chicken</strong> - 28g protein per serving</div>
+            <div class="protein-item"><strong>Paneer Tikka</strong> - 22g protein per serving</div>
+            <div class="protein-item"><strong>Chicken Biryani</strong> - 30g protein per serving</div>
+            <div class="protein-item"><strong>Protein Power Bowl</strong> - 40g protein (custom order)</div>
+          </div>
+          
+          <h3>✅ Our Quality Commitments:</h3>
+          <div class="protein-list">
+            <div class="protein-item">✓ No artificial preservatives</div>
+            <div class="protein-item">✓ Farm-to-table sourcing</div>
+            <div class="protein-item">✓ Daily fresh deliveries</div>
+            <div class="protein-item">✓ Cold-chain maintained</div>
+          </div>
+        `;
+      }
+      else if (feature === 'fineDining') {
+        featureContent.innerHTML = `
+          <h2><i class="fas fa-crown"></i> Exquisite Fine Dining Experience</h2>
+          <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80" class="feature-image" alt="Fine Dining">
+          <p>Immerse yourself in an elegant ambiance with world-class service and culinary excellence.</p>
+          
+          <h3>✨ Our Dining Experience Includes:</h3>
+          <div class="dining-list">
+            <div class="dining-item"><strong>🎨 Elegant Ambiance</strong> - Soft lighting, premium decor</div>
+            <div class="dining-item"><strong>🎵 Live Music</strong> - Every Friday and Saturday evening</div>
+            <div class="dining-item"><strong>🍷 Premium Wine Selection</strong> - Curated from around the world</div>
+            <div class="dining-item"><strong>👔 Dress Code</strong> - Smart casual (No shorts/slippers after 7 PM)</div>
+          </div>
+          
+          <h3>🍽️ Dining Options:</h3>
+          <div class="dining-list">
+            <div class="dining-item"><strong>Private Dining Rooms</strong> - For special occasions (up to 20 guests)</div>
+            <div class="dining-item"><strong>Chef's Table</strong> - Exclusive 6-seat experience with tasting menu</div>
+            <div class="dining-item"><strong>Outdoor Terrace</strong> - Al fresco dining with city views</div>
+            <div class="dining-item"><strong>Bar & Lounge</strong> - Craft cocktails and small plates</div>
+          </div>
+          
+          <h3>📅 Reservation Required:</h3>
+          <div class="dining-list">
+            <div class="dining-item">Call: +91 98765 43210</div>
+            <div class="dining-item">Online: www.smartbite.com/reserve</div>
+            <div class="dining-item">Walk-ins welcome (subject to availability)</div>
+          </div>
+        `;
+      }
+      else if (feature === 'expertChefs') {
+        featureContent.innerHTML = `
+          <h2><i class="fas fa-user-chef"></i> Meet Our Expert Culinary Team</h2>
+          <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=800&q=80" class="feature-image" alt="Expert Chefs">
+          <p>Our master chefs bring decades of experience and international training to create culinary magic.</p>
+          
+          <h3>👨‍🍳 Our Chef Lineup:</h3>
+          <div class="protein-list">
+            <div class="protein-item"><strong>Chef Rajiv Sharma</strong> - Executive Chef (25 years exp., trained at Le Cordon Bleu)</div>
+            <div class="protein-item"><strong>Chef Maria Gonzales</strong> - Pastry Chef (Specializes in French patisserie)</div>
+            <div class="protein-item"><strong>Chef Amit Kumar</strong> - Indian Cuisine Specialist (Master of regional Indian flavors)</div>
+            <div class="protein-item"><strong>Chef Lisa Chen</strong> - Asian Fusion Expert (Pan-Asian and molecular gastronomy)</div>
+          </div>
+          
+          <h3>🏆 Awards & Recognition:</h3>
+          <div class="delivery-list">
+            <div class="delivery-item">⭐ Best Restaurant 2023 - Foodie Awards</div>
+            <div class="delivery-item">⭐ Michelin Star Nominee 2024</div>
+            <div class="delivery-item">⭐ Best Fine Dining - City Magazine 2023</div>
+          </div>
+          
+          <h3>🎓 Chef's Specialties:</h3>
+          <div class="dining-list">
+            <div class="dining-item"><strong>Signature Tasting Menu</strong> - 7-course meal curated by Chef Rajiv</div>
+            <div class="dining-item"><strong>Live Cooking Stations</strong> - On weekends</div>
+            <div class="dining-item"><strong>Cooking Workshops</strong> - Learn from our experts (monthly)</div>
+            <div class="dining-item"><strong>Custom Menu Planning</strong> - For private events</div>
+          </div>
+          
+          <h3>📸 Follow Our Chefs:</h3>
+          <div class="delivery-list">
+            <div class="delivery-item">Instagram: @smartbite_chefs</div>
+            <div class="delivery-item">YouTube: Cooking with SmartBite</div>
+          </div>
+        `;
+      }
+      
+      document.getElementById('featureDetailModal').style.display = 'flex';
+    }
 
     // Login Check
     const userLoggedIn = localStorage.getItem("userLoggedIn") === "true";

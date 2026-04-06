@@ -270,6 +270,12 @@
       color: #ffb74d;
     }
 
+    .status-ready {
+      background: rgba(76, 175, 80, 0.3);
+      color: #4CAF50;
+      animation: pulse 1s infinite;
+    }
+
     .timer-container {
       display: inline-flex;
       align-items: center;
@@ -296,6 +302,22 @@
       font-size: 16px;
       font-weight: bold;
       color: #ff9800;
+    }
+
+    .progress-bar-container {
+      margin: 15px 0;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      height: 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #4CAF50, #8BC34A);
+      border-radius: 10px;
+      transition: width 1s ease;
+      width: 0%;
     }
 
     .order-items {
@@ -346,7 +368,7 @@
       font-size: 20px;
     }
 
-    .reorder-btn, .track-btn {
+    .reorder-btn, .track-btn, .received-btn {
       background: linear-gradient(45deg, #4CAF50, #2E7D32);
       color: white;
       border: none;
@@ -365,7 +387,22 @@
       background: linear-gradient(45deg, #2196f3, #1976d2);
     }
 
-    .reorder-btn:hover, .track-btn:hover {
+    .received-btn {
+      background: linear-gradient(45deg, #ff9800, #f57c00);
+      animation: btnPulse 1.5s infinite;
+    }
+
+    .received-btn.complete {
+      background: linear-gradient(45deg, #4CAF50, #2E7D32);
+      animation: none;
+    }
+
+    @keyframes btnPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .reorder-btn:hover, .track-btn:hover, .received-btn:hover {
       transform: scale(1.05);
     }
 
@@ -438,7 +475,6 @@
       .order-header { flex-direction: column; align-items: flex-start; }
     }
 
-    /* Demo button to add orders */
     .demo-actions {
       margin-bottom: 20px;
       display: flex;
@@ -573,10 +609,11 @@
     document.getElementById('userEmail').textContent = userEmail;
     document.getElementById('memberSince').textContent = new Date().toLocaleDateString();
 
-    function showToast(message) {
+    function showToast(message, isError = false) {
       const toast = document.createElement('div');
       toast.className = 'toast';
-      toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+      toast.style.background = isError ? '#f44336' : '#4CAF50';
+      toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${message}`;
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
     }
@@ -591,6 +628,11 @@
       const timerElement = document.getElementById(`timer-${orderId}`);
       if (timerElement) {
         timerElement.textContent = formatTime(remainingSeconds);
+      }
+      const progressBar = document.getElementById(`progress-${orderId}`);
+      if (progressBar) {
+        const progressPercent = ((TIMER_SECONDS - remainingSeconds) / TIMER_SECONDS) * 100;
+        progressBar.style.width = `${progressPercent}%`;
       }
     }
 
@@ -638,13 +680,33 @@
       activeTimers.set(order.billNo, interval);
     }
 
+    // Manual order received function - can be called before timer finishes
+    window.manualOrderReceived = function(billNo) {
+      const order = allOrders.find(o => o.billNo === billNo);
+      if (order && order.status !== 'completed') {
+        // Stop the timer
+        if (activeTimers.has(billNo)) {
+          clearInterval(activeTimers.get(billNo));
+          activeTimers.delete(billNo);
+        }
+        
+        // Mark as completed
+        order.status = 'completed';
+        saveOrders();
+        
+        showToast(`✅ Order ${billNo} marked as RECEIVED! Thank you for ordering with SmartBite.`);
+        updateStats();
+        renderOrders();
+      }
+    };
+
     function completeOrder(billNo) {
       const orderIndex = allOrders.findIndex(o => o.billNo === billNo);
       if (orderIndex !== -1 && allOrders[orderIndex].status !== 'completed') {
         allOrders[orderIndex].status = 'completed';
         saveOrders();
         
-        showToast(`✅ Order ${billNo} is ready!`);
+        showToast(`✅ Order ${billNo} is ready! Your order has been completed.`);
         updateStats();
         renderOrders();
       }
@@ -666,7 +728,7 @@
           userEmail: userEmail,
           status: 'pending',
           date: new Date().toLocaleString(),
-          items: [{ name: "Sample Pizza", quantity: 1, totalPrice: 299 }],
+          items: [{ name: "Margherita Pizza", quantity: 1, totalPrice: 299 }],
           total: 299,
           startTime: Date.now(),
           remaining: TIMER_SECONDS
@@ -777,10 +839,11 @@
       container.innerHTML = filteredOrders.map(order => {
         const isPending = order.status !== 'completed';
         const statusClass = order.status === 'completed' ? 'completed' : 'pending';
-        const statusText = order.status === 'completed' ? 'Completed ✓' : 'Preparing Food...';
+        const statusText = order.status === 'completed' ? '✅ Received!' : '🍳 Preparing Food...';
         const statusBadge = order.status === 'completed' ? 'status-completed' : 'status-pending';
         
         const remaining = order.remaining !== undefined ? order.remaining : TIMER_SECONDS;
+        const progressPercent = ((TIMER_SECONDS - remaining) / TIMER_SECONDS) * 100;
         
         return `
           <div class="order-card ${statusClass}">
@@ -801,6 +864,12 @@
               </div>
             </div>
             
+            ${isPending ? `
+              <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-${order.billNo}" style="width: ${progressPercent}%"></div>
+              </div>
+            ` : ''}
+            
             <div class="order-items">
               ${order.items.map(item => `
                 <div class="order-item">
@@ -815,9 +884,14 @@
                 Total: <span>₹${order.total}</span>
               </div>
               ${isPending ? `
-                <button class="track-btn" onclick="trackOrder('${order.billNo}')">
-                  <i class="fas fa-map-marker-alt"></i> Track Order
-                </button>
+                <div style="display: flex; gap: 10px;">
+                  <button class="track-btn" onclick="trackOrder('${order.billNo}')">
+                    <i class="fas fa-map-marker-alt"></i> Track Order
+                  </button>
+                  <button class="received-btn" onclick="manualOrderReceived('${order.billNo}')">
+                    <i class="fas fa-check-circle"></i> Order Received
+                  </button>
+                </div>
               ` : `
                 <button class="reorder-btn" onclick="reorder('${order.billNo}')">
                   <i class="fas fa-redo-alt"></i> Reorder
@@ -846,7 +920,8 @@
       if (order && order.remaining !== undefined) {
         const mins = Math.floor(order.remaining / 60);
         const secs = order.remaining % 60;
-        alert(`📦 Order ${billNo}\n⏱️ Time remaining: ${mins} min ${secs} sec\n🍳 Status: Food is being prepared`);
+        const progress = ((TIMER_SECONDS - order.remaining) / TIMER_SECONDS) * 100;
+        alert(`📦 Order ${billNo}\n⏱️ Estimated time: ${mins} min ${secs} sec\n📊 Preparation progress: ${Math.floor(progress)}%\n🍳 Status: Food is being prepared\n\n💡 Tip: Click "Order Received" button when you get your order!`);
       }
     };
 
